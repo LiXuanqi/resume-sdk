@@ -1,5 +1,7 @@
 # Architecture
 
+See [SPEC.md](SPEC.md) for authoritative contracts, scope, and acceptance criteria. This file is a brief overview.
+
 Source providers → validated canonical resume → selected template → portable HTML → PDF.
 
 - core: versioned schema, validation, and contracts; no rendering or platform adapters.

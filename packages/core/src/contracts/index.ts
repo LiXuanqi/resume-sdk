@@ -1,8 +1,9 @@
-import type { Resume } from "../schema/resume.js";
-
+import type { Resume, Section } from "../schema/resume.js";
 export interface Diagnostic {
+  code: string;
   message: string;
   severity: "warning" | "error";
+  path?: string;
 }
 export interface ProviderResult {
   resume: Resume;
@@ -14,6 +15,7 @@ export interface ResumeProvider<Input = string> {
 }
 export interface RenderOptions {
   paper: "a4" | "letter";
+  sections?: Section[];
 }
 export interface ResumeAsset {
   path: string;

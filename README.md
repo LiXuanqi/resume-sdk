@@ -4,9 +4,13 @@ One resume. Any source. Any format.
 
 A pnpm + Node.js + TypeScript workspace for portable resume generation.
 
+Implementation source of truth: [docs/SPEC.md](docs/SPEC.md).
+
 ## Status
 
-Initial scaffold. YAML/JSON parsing, strict validation of a minimal versioned schema, and JSON normalization work. Templates, HTML rendering, asset packaging, and PDF export are planned interfaces/directories, not implemented features. The initial schema supports only `schemaVersion` and `basics` (name and optional label); unknown fields fail validation to prevent accidental data loss. Do not use it with a full existing resume yet.
+Working vertical slice: YAML/JSON validation and normalization, a classic resume template, standalone offline HTML, and Playwright PDF export. Supports profile, work, education, projects, skills, restricted inline Markdown, section selection, and A4/Letter paper sizes. See [docs/schema.md](docs/schema.md) for the version-1 data contract.
+
+This is a small MVP, not the full specification. Custom fonts/images and asset packaging, fragment export, other templates/providers, React slots, and LLM tailoring remain unimplemented. The built-in template uses system fonts; Chromium embeds the selected fonts in the PDF, but appearance can vary between hosts.
 
 ## Development
 
@@ -36,11 +40,20 @@ tests/              Shared fixtures and future integration tests
 docs/               Architecture notes
 ```
 
-## Next milestone
+## Generate a resume
 
-Expand the resume schema, implement a classic template, and export standalone HTML and PDF. Then add fragment + CSS output and framework integrations.
+```sh
+pnpm build
+pnpm --filter @resume-sdk/pdf exec playwright install chromium
+node apps/cli/dist/index.js build examples/resume.yaml --format html,pdf --out dist/demo
+node apps/cli/dist/index.js normalize examples/resume.yaml --out dist/resume.json
+```
 
-Chromium is not installed by dependency installation. When implementing PDF export, install it explicitly with `pnpm --filter @resume-sdk/pdf exec playwright install chromium` (CI may also need `--with-deps`).
+Open `dist/demo/resume.html` in any browser or upload `dist/demo/resume.pdf` to an application. All example data is fictional. The outputs require no server, React, or runtime JavaScript. HTML-only export does not start Chromium.
+
+Options: `--template classic`, `--format html|pdf|html,pdf`, `--paper letter|a4`, `--sections work,education,projects,skills`, `--out <directory>`, and `--force`. Existing outputs are protected by default. Input files are never overwritten. Raw HTML in descriptions is escaped; Markdown emphasis and safe HTTP(S)/mailto links are supported.
+
+`pnpm test` builds first and runs schema, safe-text, and CLI integration tests. `pnpm test:pdf` additionally requires installed Chromium and Poppler (`pdfinfo`, `pdftotext`, `pdffonts`) and checks multi-page A4/Letter exports, extracted content, fonts, and links. On Linux CI, browser installation uses `playwright install --with-deps chromium`.
 
 All packages are private to prevent accidental publishing. Source repository: [LiXuanqi/resume-sdk](https://github.com/LiXuanqi/resume-sdk). No npm scope or package has been created or reserved. Choose a license before publishing.
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { resumeSchema } from "./resume.js";
 
-describe("initial resume schema", () => {
+describe("resume schema", () => {
   it("normalizes whitespace in the name", () => {
     expect(
       resumeSchema.parse({ schemaVersion: "1", basics: { name: " Ada Lovelace " } }).basics.name,
@@ -12,7 +12,8 @@ describe("initial resume schema", () => {
       false,
     );
     expect(
-      resumeSchema.safeParse({ schemaVersion: "1", basics: { name: "Ada" }, work: [] }).success,
+      resumeSchema.safeParse({ schemaVersion: "1", basics: { name: "Ada" }, unknownSection: [] })
+        .success,
     ).toBe(false);
   });
 });

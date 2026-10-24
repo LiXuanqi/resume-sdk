@@ -1,4 +1,60 @@
+# Fictional demonstration data; not a real person.
 schemaVersion: "1"
 basics:
-  name: Ada Lovelace
-  label: Software Engineer
+  name: Alex Morgan
+  label: Software Engineer · Data Platforms
+  email: alex@example.com
+  location: Portland, OR
+  url: example.com
+  profiles:
+    - network: GitHub
+      url: https://github.com/example
+  summary: Software engineer building **reliable data systems** and practical
+    developer tools. Enjoys turning complex workflows into clear, maintainable
+    products.
+work:
+  - name: Northstar Analytics (fictional)
+    position: Senior Software Engineer
+    location: Remote
+    startDate: 2022-04
+    current: true
+    highlights:
+      - Designed a streaming ingestion service processing **12 million events
+        per day** with documented recovery procedures.
+      - Reduced query latency by **35%** through indexing and workload profiling.
+      - Mentored three engineers and introduced reusable integration-test
+        fixtures.
+  - name: Cedar Software (fictional)
+    position: Software Engineer
+    location: Portland, OR
+    startDate: 2019-07
+    endDate: 2022-03
+    highlights:
+      - Built TypeScript APIs and PostgreSQL-backed reporting tools for internal
+        teams.
+      - Automated release checks and reduced manual deployment steps from eight
+        to two.
+education:
+  - institution: Example University
+    studyType: B.S.
+    area: Computer Science
+    startDate: "2015"
+    endDate: "2019"
+projects:
+  - name: Queue Notes
+    description: An open-source-style demonstration of durable job processing.
+    url: https://example.com/queue-notes
+    highlights:
+      - Implemented retries, idempotency keys, and a small operational dashboard.
+skills:
+  - name: Languages
+    keywords:
+      - TypeScript
+      - Python
+      - SQL
+  - name: Systems
+    keywords:
+      - Node.js
+      - PostgreSQL
+      - Kafka
+      - Docker

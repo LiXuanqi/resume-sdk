@@ -1,1 +1,1 @@
-Classic template implementation belongs here. It will consume validated resume data and emit a scoped HTML fragment, CSS, and assets.
+Classic template: semantic HTML and scoped CSS with safe inline Markdown. Uses system fonts and no external assets.

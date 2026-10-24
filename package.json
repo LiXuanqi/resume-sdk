@@ -14,7 +14,9 @@
     "lint:fix": "oxlint --fix --deny-warnings .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "pretest": "pnpm build",
+    "test:pdf": "node tests/integration/pdf-smoke.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

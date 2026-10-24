@@ -1,1 +1,1 @@
-Shared formatting and layout helpers belong here. Avoid dependencies on a host website or framework.
+Shared HTML escaping and restricted Markdown rendering. No website or framework dependencies.

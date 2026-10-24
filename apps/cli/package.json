@@ -16,7 +16,9 @@
   },
   "dependencies": {
     "@resume-sdk/core": "workspace:*",
+    "@resume-sdk/pdf": "workspace:*",
     "@resume-sdk/providers": "workspace:*",
+    "@resume-sdk/renderer": "workspace:*",
     "commander": "^14.0.0"
   },
   "engines": {
