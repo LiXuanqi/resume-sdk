@@ -1,28 +1,24 @@
-import { Option, type Command } from "commander";
+import { InvalidArgumentError, type Command } from "commander";
 import { resolve, join } from "node:path";
 import { renderDocument } from "@resume-sdk/renderer";
-import { renderOptionsSchema } from "@resume-sdk/core";
+import { presentationOptions, renderSettings, type PresentationOptions } from "../presentation.js";
 import { loadResume } from "../load.js";
 import { checkOutput, writeOutput } from "../output.js";
-interface Options {
-  template: string;
+interface Options extends PresentationOptions {
   format: string;
-  paper: "a4" | "letter";
   out: string;
   force?: boolean;
-  sections?: string;
+  json?: boolean;
 }
 export function addBuild(program: Command) {
-  program
-    .command("build")
-    .argument("<input>")
-    .description("Generate a standalone HTML resume and/or PDF")
-    .addOption(new Option("--template <id>", "Template").choices(["classic"]).default("classic"))
+  presentationOptions(
+    program
+      .command("build")
+      .argument("<input>")
+      .description("Generate standalone HTML (default) and/or PDF"),
+  )
     .option("--format <formats>", "Comma-separated html,pdf", "html")
-    .addOption(
-      new Option("--paper <size>", "Paper size").choices(["a4", "letter"]).default("letter"),
-    )
-    .option("--sections <sections>", "Comma-separated section selection/order")
+    .option("--json", "Write a machine-readable result report to stdout")
     .option("--out <directory>", "Output directory", "dist")
     .option("--force", "Replace existing outputs")
     .action(async (input: string, options: Options) => {
@@ -31,11 +27,10 @@ export function addBuild(program: Command) {
         formats.some((f) => !["html", "pdf"].includes(f)) ||
         new Set(formats).size !== formats.length
       )
-        throw new Error("Expected --format html, pdf, or html,pdf without duplicates.");
-      const settings = renderOptionsSchema.parse({
-        paper: options.paper,
-        ...(options.sections ? { sections: options.sections.split(",") } : {}),
-      });
+        throw new InvalidArgumentError(
+          "Expected --format html, pdf, or html,pdf without duplicates.",
+        );
+      const settings = renderSettings(options);
       const out = resolve(options.out);
       for (const format of formats)
         await checkOutput(join(out, `resume.${format}`), !!options.force, input);
@@ -45,10 +40,13 @@ export function addBuild(program: Command) {
       const pdf = formats.includes("pdf")
         ? await (await import("@resume-sdk/pdf")).exportPdf(html)
         : undefined;
+      const files: { format: string; path: string }[] = [];
       for (const format of formats) {
         const file = join(out, `resume.${format}`);
         await writeOutput(file, format === "html" ? html : pdf!, !!options.force);
+        files.push({ format, path: file });
         console.error(`Created ${file}`);
       }
+      if (options.json) console.log(JSON.stringify({ ok: true, files, diagnostics: [] }));
     });
 }

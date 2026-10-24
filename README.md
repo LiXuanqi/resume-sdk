@@ -32,26 +32,39 @@ node apps/cli/dist/index.js normalize examples/resume.json
 apps/cli/           CLI commands
 packages/core/      Schema, validation, and contracts
 packages/providers/ JSON and YAML adapters
-packages/templates/ Template implementations (planned)
-packages/renderer/  HTML documents, fragments, and assets (planned)
-packages/pdf/       Playwright PDF export (planned)
+packages/templates/ Classic template and safe rich text
+packages/renderer/  Standalone HTML (fragments/assets planned)
+packages/pdf/       Playwright PDF export
 examples/           Fictional source data and future integration examples
 tests/              Shared fixtures and future integration tests
 docs/               Architecture notes
 ```
 
-## Generate a resume
+## Local resume workflow
+
+Build the workspace first (`pnpm build`). Packages are not published yet; invoke the executable with `node /absolute/path/to/resume-sdk/apps/cli/dist/index.js` or `pnpm cli` from the workspace. The examples below use `resume-sdk` as shorthand for that executable.
 
 ```sh
-pnpm build
-pnpm --filter @resume-sdk/pdf exec playwright install chromium
-node apps/cli/dist/index.js build examples/resume.yaml --format html,pdf --out dist/demo
-node apps/cli/dist/index.js normalize examples/resume.yaml --out dist/resume.json
+resume-sdk init                         # Create ./resume.yaml; never overwrite
+resume-sdk validate resume.yaml
+resume-sdk preview resume.yaml --open   # Localhost:3000, automatic refresh
+resume-sdk build resume.yaml            # HTML only → ./dist/resume.html
+resume-sdk build resume.yaml --format pdf --force
+resume-sdk build resume.yaml --format html,pdf --out artifacts --force --json
+resume-sdk normalize resume.yaml --out resume.json
 ```
 
-Open `dist/demo/resume.html` in any browser or upload `dist/demo/resume.pdf` to an application. All example data is fictional. The outputs require no server, React, or runtime JavaScript. HTML-only export does not start Chromium.
+HTML builds need no Chromium. Before PDF export, run from this workspace:
 
-Options: `--template classic`, `--format html|pdf|html,pdf`, `--paper letter|a4`, `--sections work,education,projects,skills`, `--out <directory>`, and `--force`. Existing outputs are protected by default. Input files are never overwritten. Raw HTML in descriptions is escaped; Markdown emphasis and safe HTTP(S)/mailto links are supported.
+```sh
+pnpm --filter @resume-sdk/pdf exec playwright install chromium
+```
+
+Build and preview share `--template classic`, `--paper letter|a4`, and `--sections work,education,projects,skills` (selection/order). Preview supports `--port <number>` (default 3000, 0 chooses a free port) and `--open`. It keeps output in memory, watches editor saves, and shows validation errors without discarding the last valid preview. Stop with Ctrl+C. PDF export is the reference for pagination.
+
+Build supports `--format html|pdf|html,pdf`, `--out <directory>` (default `dist`), `--force`, and `--json`. JSON mode writes a result report with `ok`, `files`, and `diagnostics` to stdout; progress and errors go to stderr. Existing outputs are protected by default. Input files are never overwritten. Exit codes: 0 success, 1 execution/validation failure, 2 usage error. Use `--debug` for stacks.
+
+Exported HTML works offline without a server, React, or runtime JavaScript; preview adds development-only refresh code. Raw HTML in descriptions is escaped; Markdown emphasis and safe links are supported. All starter/example data is fictional. Config discovery, fragment export, and external imports are deferred.
 
 `pnpm test` builds first and runs schema, safe-text, and CLI integration tests. `pnpm test:pdf` additionally requires installed Chromium and Poppler (`pdfinfo`, `pdftotext`, `pdffonts`) and checks multi-page A4/Letter exports, extracted content, fonts, and links. On Linux CI, browser installation uses `playwright install --with-deps chromium`.
 

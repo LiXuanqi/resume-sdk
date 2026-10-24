@@ -1,18 +1,24 @@
 #!/usr/bin/env node
-import { Command } from "commander";
-import { addValidate } from "./commands/validate.js";
-import { addNormalize } from "./commands/normalize.js";
-import { addBuild } from "./commands/build.js";
-const program = new Command()
-  .name("resume-sdk")
-  .description("Portable resume data and document generation")
-  .version("0.0.0");
-addValidate(program);
-addNormalize(program);
-addBuild(program);
+import { CommanderError } from "commander";
+import { createProgram } from "./program.js";
+const program = createProgram();
 try {
-  await program.parseAsync();
+  if (process.argv.length === 2) program.outputHelp();
+  else await program.parseAsync();
 } catch (error) {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
+  if (!(error instanceof CommanderError && error.exitCode === 0)) {
+    const message = error instanceof Error ? error.message : String(error);
+    const code = error instanceof CommanderError ? "CLI_USAGE" : "COMMAND_FAILED";
+    const build = program.commands.find((command) => command.name() === "build");
+    if (build?.opts().json)
+      console.log(
+        JSON.stringify({
+          ok: false,
+          files: [],
+          diagnostics: [{ severity: "error", code, message }],
+        }),
+      );
+    console.error(program.opts().debug && error instanceof Error ? error.stack : message);
+    process.exitCode = error instanceof CommanderError ? 2 : 1;
+  }
 }

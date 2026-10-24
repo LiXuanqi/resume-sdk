@@ -76,18 +76,32 @@ Fragment styles use a dedicated root namespace and documented CSS variables. Sco
 
 ## CLI and library surface
 
-Target CLI (not all commands/options exist yet):
+### Local CLI workflow
+
+Implemented commands (input is explicit; no config discovery or interactive prompts):
 
 ```sh
+resume-sdk init
 resume-sdk validate resume.yaml
+resume-sdk preview resume.yaml --open
+resume-sdk build resume.yaml
+resume-sdk build resume.yaml --format html,pdf --out dist/ --force --json
 resume-sdk normalize resume.yaml --out resume.json
-resume-sdk build resume.yaml --template classic --format html,pdf --paper letter --out dist/
-resume-sdk build resume.yaml --format html --mode fragment --out dist/embed/
 ```
 
-- Infer YAML/JSON from file extension; reject unsupported input, template, format, or mode values.
-- `normalize` writes JSON to stdout unless `--out` is supplied. Diagnostics go to stderr. Failures exit nonzero.
-- `build` writes `resume.html` and/or `resume.pdf`; fragment mode is HTML-only and also writes CSS/assets. Create missing output directories; refuse overwrites unless `--force` is supplied.
+- `init` writes documented, fictional starter data to `./resume.yaml`. Never overwrites, including symlinks; no `--force` option.
+- `validate <input>` checks canonical data and reports field-specific failures.
+- `build <input>` defaults to standalone HTML, classic template, Letter paper, all populated sections, and `./dist`. `--format` accepts `html`, `pdf`, or comma-separated `html,pdf` without duplicates. HTML-only builds do not load/start Chromium.
+- Build and preview share `--template classic`, `--paper letter|a4`, and `--sections <comma-separated-selection/order>`. Unknown/duplicate sections fail.
+- Build writes `resume.html` and/or `resume.pdf`; creates missing directories and refuses overwrites unless `--force`. Never overwrites its input. Prepare all requested artifacts before writing files; multi-file writes are not transactional.
+- `build --json` emits one report on stdout: success `{ ok: true, files: [{ format, path }], diagnostics: [] }`; execution failure `{ ok: false, files: [], diagnostics: [{ severity, code, message }] }`. Paths are absolute. `files` on failure does not guarantee rollback of filesystem writes. Progress/errors go to stderr. Parser failures may occur before JSON mode is established.
+- `preview <input>` starts a server bound to `127.0.0.1`, default port 3000; `--port 0` selects an available port. `--open` opens the default browser. Port conflicts fail clearly; no automatic port switching.
+- Preview watches the explicit input, including atomic replacement/deletion/recreation. Initial invalid input fails; subsequent errors appear in the browser and stderr while retaining the last valid rendering. Recovery clears errors; valid changed HTML refreshes automatically. The server holds output in memory, writes no artifacts, and closes its watcher/server on Ctrl+C or SIGTERM.
+- Preview adds development-only polling JavaScript. Exported HTML remains script-free. PDF export is the pagination reference; preview does not export PDF.
+- `normalize` writes canonical JSON to stdout unless `--out` is supplied; `--force` permits replacement. It remains an auxiliary utility.
+- Infer YAML/JSON from extension; reject unsupported files/options. No arguments shows help/examples. `--help` and `--version` succeed; version comes from package metadata. `--debug` includes error stacks.
+- Exit codes: 0 success/help, 1 input/validation/I/O/render failure, 2 CLI usage errors. Commands never prompt, making them usable in CI. Missing Chromium errors include the installation command.
+- Configuration files, interactive setup, external `import`/authentication, template discovery, and fragment CLI output are deferred. Planned fragment invocation: `resume-sdk build resume.yaml --format html --mode fragment --out dist/embed/`.
 - Library APIs expose validation, provider loading, template rendering, document assembly, and PDF export independently. Returning artifacts must not require writing files.
 - No external provider or LLM calls during normal builds. A frozen input snapshot can be built offline once dependencies/browser/fonts are installed.
 

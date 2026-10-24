@@ -1,5 +1,5 @@
-import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { execFileSync, spawn, spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, renameSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, expect, it } from "vitest";
@@ -50,3 +50,108 @@ it("rejects invalid input and unsupported options", () => {
     run("normalize", "examples/resume.json", "--out", "examples/resume.json", "--force"),
   ).toThrow(/Command failed/);
 });
+
+it("creates a valid starter without overwriting and defaults to HTML", () => {
+  const cwd = temp();
+  execFileSync(process.execPath, [cli, "init"], { cwd, stdio: "pipe" });
+  const input = join(cwd, "resume.yaml");
+  const starter = readFileSync(input, "utf8");
+  expect(run("validate", input)).toContain("valid");
+  expect(spawnSync(process.execPath, [cli, "init"], { cwd }).status).toBe(1);
+  expect(readFileSync(input, "utf8")).toBe(starter);
+  const result = JSON.parse(
+    execFileSync(process.execPath, [cli, "build", "resume.yaml", "--json"], {
+      cwd,
+      encoding: "utf8",
+      stdio: "pipe",
+    }),
+  );
+  expect(result).toEqual({
+    ok: true,
+    files: [{ format: "html", path: join(cwd, "dist/resume.html") }],
+    diagnostics: [],
+  });
+  expect(existsSync(join(cwd, "dist/resume.pdf"))).toBe(false);
+});
+it("reports build failures as JSON and distinguishes usage errors", () => {
+  const input = join(temp(), "invalid.yaml");
+  writeFileSync(input, 'schemaVersion: "1"\nbasics: {}');
+  const result = spawnSync(process.execPath, [cli, "build", input, "--json"], { encoding: "utf8" });
+  expect(result.status).toBe(1);
+  expect(JSON.parse(result.stdout)).toMatchObject({
+    ok: false,
+    files: [],
+    diagnostics: [{ code: "COMMAND_FAILED", message: expect.stringContaining("basics.name") }],
+  });
+  for (const args of [
+    ["build", input, "--format", "docx"],
+    ["build", input, "--sections", "unknown"],
+    ["preview", input, "--port", "-1"],
+    ["preview"],
+  ]) {
+    expect(spawnSync(process.execPath, [cli, ...args]).status).toBe(2);
+  }
+  expect(run()).toContain("Examples:");
+  expect(run("--help")).toContain("preview");
+  expect(run("--version").trim()).toBe(
+    JSON.parse(readFileSync("apps/cli/package.json", "utf8")).version,
+  );
+});
+it("previews edits, preserves good output on errors, recovers, and stops cleanly", async () => {
+  const cwd = temp();
+  const input = join(cwd, "resume.yaml");
+  const source = (name: string) => `schemaVersion: "1"\nbasics:\n  name: ${name}\n`;
+  writeFileSync(input, source("Before"));
+  const child = spawn(process.execPath, [cli, "preview", input, "--port", "0"], {
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  let stderr = "";
+  child.stderr.on("data", (chunk) => {
+    stderr += chunk.toString();
+  });
+  const exited = new Promise<number | null>((resolveExit) => child.once("exit", resolveExit));
+  async function until<T>(read: () => Promise<T>, accept: (value: T) => boolean): Promise<T> {
+    const deadline = Date.now() + 7000;
+    while (true) {
+      const value = await read();
+      if (accept(value)) return value;
+      if (Date.now() > deadline) throw new Error(`Preview timeout: ${stderr}`);
+      await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+    }
+  }
+  try {
+    const url = await until(async () => stderr.match(/http:\/\/127\.0\.0\.1:\d+\//)?.[0], Boolean);
+    const page = () => fetch(url!).then((response) => response.text());
+    const status = () =>
+      fetch(`${url}_resume/status`).then((response) => response.json()) as Promise<{
+        revision: number;
+        error: string;
+      }>;
+    expect(await page()).toContain("Before");
+    expect((await fetch(`${url}arbitrary`)).status).toBe(404);
+    // Atomic replacement is how many editors save files.
+    writeFileSync(join(cwd, "next.yaml"), source("After"));
+    renameSync(join(cwd, "next.yaml"), input);
+    await until(status, (value) => value.revision === 1);
+    expect(await page()).toContain("After");
+    writeFileSync(input, 'schemaVersion: "1"\nbasics: {}');
+    await until(status, (value) => value.error.includes("basics.name"));
+    expect(await page()).toContain("After");
+    writeFileSync(input, source("After"));
+    await until(status, (value) => value.error === "");
+    rmSync(input);
+    await until(status, (value) => value.error.includes("ENOENT"));
+    writeFileSync(input, source("Recovered"));
+    await until(status, (value) => value.revision === 2 && !value.error);
+    expect(await page()).toContain("Recovered");
+    expect(existsSync(join(cwd, "dist"))).toBe(false);
+  } finally {
+    child.kill("SIGTERM");
+    const timer = setTimeout(() => child.kill("SIGKILL"), 3000);
+    try {
+      expect(await exited).toBe(0);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+}, 20000);
