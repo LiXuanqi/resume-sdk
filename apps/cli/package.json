@@ -1,0 +1,25 @@
+{
+  "name": "resume-sdk",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "resume-sdk": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@resume-sdk/core": "workspace:*",
+    "@resume-sdk/providers": "workspace:*",
+    "commander": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
