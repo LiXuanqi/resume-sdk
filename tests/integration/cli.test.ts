@@ -209,3 +209,32 @@ it("selects the blog template with packaged CSS and safe TSX text", () => {
     /Command failed/,
   );
 });
+
+it("writes fragment HTML/CSS together, reports both, and protects existing CSS", () => {
+  const out = temp();
+  writeFileSync(join(out, "resume.css"), "keep this");
+  expect(() => run("build", "examples/resume.yaml", "--mode", "fragment", "--out", out)).toThrow(
+    /Command failed/,
+  );
+  expect(existsSync(join(out, "resume.html"))).toBe(false);
+  const report = JSON.parse(
+    run("build", "examples/resume.yaml", "--mode", "fragment", "--out", out, "--force", "--json"),
+  );
+  expect(report.files.map((file: { format: string }) => file.format)).toEqual(["html", "css"]);
+  expect(readFileSync(join(out, "resume.html"), "utf8")).not.toContain("<!doctype");
+  expect(readFileSync(join(out, "resume.css"), "utf8")).toContain("[data-resume-sdk=");
+  expect(existsSync(join(out, "resume.pdf"))).toBe(false);
+  for (const format of ["pdf", "html,pdf"]) {
+    expect(
+      spawnSync(process.execPath, [
+        cli,
+        "build",
+        "examples/resume.yaml",
+        "--mode",
+        "fragment",
+        "--format",
+        format,
+      ]).status,
+    ).toBe(2);
+  }
+});

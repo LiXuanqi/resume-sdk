@@ -18,7 +18,7 @@ src/
 ## Add a template
 
 1. Create `<id>/index.tsx` exporting a `ResumeTemplate`. Validate input and options; return `renderToStaticMarkup(<YourResume />)` as `html`, imported CSS as `css`, and `assets: []`.
-2. Scope fragment CSS to the template's root class. Global body/page-shell rules belong in the optional `document: { marginMm, css }` field, which fragment consumers must omit. Let the document renderer emit page size/margins.
+2. Scope fragment CSS to the template's root class. Keep all paper padding/minimum heights in the standalone shell. Fragment CSS supports flat rules plus `@media`/`@supports`; other at-rules/nesting currently fail. Global body/page-shell rules belong in the optional `document: { marginMm, css }` field, which fragment consumers must omit. Let the document renderer emit page size/margins.
 3. Use ordinary JSX expressions for data; React escapes them. Use `RichText`/`Highlights` for descriptions. Never insert source HTML directly. Keep data fetching, filesystem access, browser effects, and website navigation out of templates.
 4. Register the template in `src/index.ts`. CLI build/preview choices follow that registry automatically. Honor selected section order and populated content; do not trim facts to fit a page. Reject unsupported presentation options explicitly.
 5. Run `pnpm check` and `pnpm test:pdf`. Preview fictional data with `pnpm cli preview examples/resume.yaml --template <id>`; inspect short/long resumes, both papers, links, and malicious-looking text.

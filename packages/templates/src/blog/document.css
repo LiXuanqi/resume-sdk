@@ -22,3 +22,34 @@ body {
     box-shadow: none;
   }
 }
+
+.resume-blog .blog-sheet {
+  min-height: 297mm;
+  padding: 32px;
+  background: white;
+}
+@media print {
+  .resume-blog .blog-sheet {
+    min-height: 0;
+    padding: 24px;
+  }
+}
+.resume-blog .blog-content {
+  min-height: 100vh;
+  background: white;
+}
+@media print {
+  .resume-blog .blog-content {
+    min-height: 0;
+  }
+}
+.resume-blog .blog-body {
+  max-width: 8.5in;
+  margin: auto;
+  padding: 24px;
+}
+@media print {
+  .resume-blog .blog-body {
+    padding: 16px;
+  }
+}

@@ -7,7 +7,7 @@ Source providers → validated canonical resume → selected template → portab
 - core: versioned schema, validation, and contracts; no rendering or platform adapters.
 - providers: parse source data and validate it; JSON and YAML initially.
 - templates: layout and scoped styling; independent of host sites.
-- renderer: standalone documents, fragments, and asset packaging.
+- renderer: standalone documents and scoped fragments; asset packaging is deferred.
 - pdf: isolated Playwright dependency for browser-based export.
 - cli: user-facing orchestration.
 

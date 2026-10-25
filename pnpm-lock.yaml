@@ -238,6 +238,9 @@ importers:
       '@resume-sdk/templates':
         specifier: workspace:*
         version: link:../templates
+      postcss:
+        specifier: ^8.5.31
+        version: 8.5.31
 
   packages/templates:
     dependencies:

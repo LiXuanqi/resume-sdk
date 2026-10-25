@@ -8,9 +8,9 @@ Implementation source of truth: [docs/SPEC.md](docs/SPEC.md).
 
 ## Status
 
-Working vertical slice: YAML/JSON validation and normalization, classic and blog templates, standalone offline HTML, and Playwright PDF export. Supports profile, work, education, projects, skills, restricted inline Markdown, section selection, and A4/Letter paper sizes. See [docs/schema.md](docs/schema.md) for the version-1 data contract.
+Working vertical slice: YAML/JSON validation and normalization, classic and blog templates, standalone offline HTML, embeddable HTML/scoped CSS, and Playwright PDF export. Supports profile, work, education, projects, skills, restricted inline Markdown, section selection, and A4/Letter paper sizes. See [docs/schema.md](docs/schema.md) for the version-1 data contract.
 
-This is a small MVP, not the full specification. Custom fonts/images and asset packaging, fragment export, external providers, React slots, and LLM tailoring remain unimplemented. The built-in template uses system fonts; Chromium embeds the selected fonts in the PDF, but appearance can vary between hosts.
+This is a small MVP, not the full specification. Custom fonts/images and asset packaging, external providers, React slots, and LLM tailoring remain unimplemented. The built-in template uses system fonts; Chromium embeds the selected fonts in the PDF, but appearance can vary between hosts.
 
 ## Development
 
@@ -32,8 +32,8 @@ node apps/cli/dist/index.js normalize examples/resume.json
 apps/cli/           CLI commands
 packages/core/      Schema, validation, and contracts
 packages/providers/ JSON and YAML adapters
-packages/templates/ Classic template and safe rich text
-packages/renderer/  Standalone HTML (fragments/assets planned)
+packages/templates/ React-authored classic/blog templates
+packages/renderer/  Standalone HTML and scoped fragments
 packages/pdf/       Playwright PDF export
 examples/           Fictional source data and future integration examples
 tests/              Shared fixtures and future integration tests
@@ -68,9 +68,29 @@ Built-in templates use React/TSX and separate CSS; exported documents require no
 
 Classic defaults to comfortable spacing (10.5pt body, 16mm margins). Compact uses fixed 9pt body text, 12mm margins, and tighter spacing. Both allow long entries to split between bullets while keeping headings with content. Compact preserves all selected content; it does not guarantee a single page.
 
-Exported HTML works offline without a server, React, or runtime JavaScript; preview adds development-only refresh code. Raw HTML in descriptions is escaped; Markdown emphasis and safe links are supported. All starter/example data is fictional. Config discovery, fragment export, and external imports are deferred.
+Exported HTML works offline without a server, React, or runtime JavaScript; preview adds development-only refresh code. Raw HTML in descriptions is escaped; Markdown emphasis and safe links are supported. All starter/example data is fictional. Config discovery, and external imports are deferred.
+
+## Embed in an existing site
+
+```sh
+pnpm cli build examples/resume.yaml --mode fragment --out dist/embed
+```
+
+This writes body-only `resume.html` and scoped `resume.css`. Import/link the CSS once, then insert the generated HTML inside your React component or HTML page. Keep the generated scope wrapper intact. Header, navigation, download actions, and footer remain ordinary host components.
+
+```tsx
+function ResumeSection({ html }: { html: string }) {
+  return <section dangerouslySetInnerHTML={{ __html: html }} />;
+}
+```
+
+Pass only trusted SDK-generated HTML. See [runnable HTML and React examples](examples/embedding/README.md) for generation and Next.js wiring. Library callers use `renderFragment(resume, options, template)` to receive `{ html, css, assets }` without writing files. Built-ins need no assets; nonempty custom assets are rejected until packaging ships.
+
+`--mode document` remains the default. Fragment mode is HTML-only; generate PDF separately. Styles are scoped outward, but host resets can still affect the resume. Variables `--resume-sdk-font-family`, `--resume-sdk-color`, and `--resume-sdk-link-color` support basic theming. Global CSS at-rules and CSS nesting are unsupported in fragments. Standalone page CSS is excluded.
 
 `pnpm test` builds first and runs schema, safe-text, and CLI integration tests. `pnpm test:pdf` additionally requires installed Chromium and Poppler (`pdfinfo`, `pdftotext`, `pdffonts`) and checks multi-page A4/Letter exports, extracted content, fonts, and links. On Linux CI, browser installation uses `playwright install --with-deps chromium`.
+
+`pnpm test:embed` additionally checks both fragments together in Chromium, including host-style isolation and print rules. It uses the same installed browser as PDF tests.
 
 All packages are private to prevent accidental publishing. Source repository: [LiXuanqi/resume-sdk](https://github.com/LiXuanqi/resume-sdk). No npm scope or package has been created or reserved. Choose a license before publishing.
 

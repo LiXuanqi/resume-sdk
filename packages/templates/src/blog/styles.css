@@ -1,8 +1,15 @@
 .resume-blog {
-  color: #000;
-  font-family:
-    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    "Noto Color Emoji";
+  color: var(--resume-sdk-color, #000);
+  font-family: var(
+    --resume-sdk-font-family,
+    ui-sans-serif,
+    system-ui,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji"
+  );
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -21,7 +28,7 @@
   padding: 0;
 }
 .resume-blog a {
-  color: inherit;
+  color: var(--resume-sdk-link-color, inherit);
   text-decoration: inherit;
 }
 .resume-blog a:hover {
@@ -29,20 +36,6 @@
 }
 .resume-blog strong {
   font-weight: bolder;
-}
-.resume-blog .blog-sheet {
-  min-height: 297mm;
-  padding: 32px;
-  background: white;
-}
-.resume-blog .blog-content {
-  min-height: 100vh;
-  background: white;
-}
-.resume-blog .blog-body {
-  max-width: 8.5in;
-  margin: auto;
-  padding: 24px;
 }
 .resume-blog h1 {
   font-size: 24px;
@@ -106,16 +99,6 @@
   margin-bottom: 4px;
 }
 @media print {
-  .resume-blog .blog-sheet {
-    min-height: 0;
-    padding: 24px;
-  }
-  .resume-blog .blog-content {
-    min-height: 0;
-  }
-  .resume-blog .blog-body {
-    padding: 16px;
-  }
   .resume-blog h1 {
     font-size: 20px;
     line-height: 28px;

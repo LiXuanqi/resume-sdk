@@ -16,7 +16,8 @@
     "format:check": "oxfmt --check .",
     "prepare": "husky",
     "pretest": "pnpm build",
-    "test:pdf": "node tests/integration/pdf-smoke.mjs"
+    "test:pdf": "node tests/integration/pdf-smoke.mjs",
+    "test:embed": "node tests/integration/embed-smoke.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

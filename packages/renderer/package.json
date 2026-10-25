@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "@resume-sdk/core": "workspace:*",
-    "@resume-sdk/templates": "workspace:*"
+    "@resume-sdk/templates": "workspace:*",
+    "postcss": "^8.5.31"
   },
   "engines": {
     "node": ">=24"
