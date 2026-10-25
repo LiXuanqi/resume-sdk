@@ -12,5 +12,5 @@ Source providers → validated canonical resume → selected template → portab
 - cli: user-facing orchestration.
 
 All packages are private during scaffolding. Package scopes are provisional and have not been reserved.
-React may be used internally for templates; generated output must not require React.
+Built-in templates use React/TSX and separate CSS, compiled into static HTML/CSS artifacts. Core contracts remain framework-neutral; generated output requires no React runtime.
 Add external providers, an optional React slot API, and reviewed LLM tailoring after the base pipeline works.

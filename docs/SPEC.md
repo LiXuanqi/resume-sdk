@@ -26,7 +26,7 @@ Source, template, and output are independent choices. A template must not depend
 | `packages/pdf`       | Playwright/Chromium export of rendered HTML                         | Browser installation and execution explicit             |
 | `apps/cli`           | File I/O, selection, orchestration, diagnostics                     | Calls library APIs; no duplicated rendering logic       |
 
-Use pnpm workspaces, Node.js 24 LTS baseline, TypeScript strict mode, and ESM. Publish JavaScript and type declarations. React may implement templates internally; output consumers must not need React. Consumers can use any npm-compatible package manager. Public package names/scopes and licensing must be settled before publishing.
+Use pnpm workspaces, Node.js 24 LTS baseline, TypeScript strict mode, and ESM. Publish JavaScript and type declarations. Built-in templates use React/TSX and `react-dom/server` static rendering; esbuild compiles separate CSS files into strings at package build time. React stays inside the template package; output consumers must not need React. Consumers can use any npm-compatible package manager. Public package names/scopes and licensing must be settled before publishing.
 
 ## Canonical data
 
@@ -54,10 +54,20 @@ The initial field contract is recorded in [schema.md](schema.md); the implementa
 
 - A provider loads a caller-supplied input and returns validated resume data plus diagnostics. JSON and YAML represent the same canonical shape in MVP; a source format is not a separate resume schema.
 - Diagnostics identify severity, code, message, and field path when applicable. Errors prevent rendering; warnings identify recoverable mapping issues.
-- A template has a stable ID and renders validated data plus presentation options into `{ html, css, assets }`. The fragment is semantic body content, not a complete document.
-- Options include paper (`a4` or `letter`), section selection/order, and supported theme tokens. Default to `classic`, `letter`, and all populated sections; do not silently truncate content to fit one page.
+- A template has a stable ID and renders validated data plus presentation options into `{ html, css, assets, document? }`. The synchronous contract contains no React types: plain functions and other precompiled authoring systems remain valid. `document`, when present, contains `{ marginMm, css }` for standalone shell layout only; fragment consumers omit it. The document renderer owns `@page` size/margins and applies this explicit margin override. The fragment is semantic body content, not a complete document.
+- Options include paper (`a4` or `letter`), density (`comfortable` or `compact`), section selection/order, and future theme tokens. Density defaults to `comfortable` and changes presentation only; it is not part of canonical resume data. Default to `classic`, `letter`, and all populated sections; do not silently truncate content to fit one page.
 - Templates use semantic headings/lists, readable text, and meaningful links. Empty sections are omitted. Navigation, download buttons, and website CTAs belong to the host application.
 - Start with explicit built-in registries; library callers may supply implementations of the contracts. Dynamic npm plugin loading is deferred.
+
+### Built-in template authoring
+
+- Templates live under `packages/templates/src/<id>/`: `index.tsx`, `styles.css`, optional standalone `document.css`, and README. Shared components encapsulate safe rich text and repeated markup. Only allowlisted Markdown output reaches `dangerouslySetInnerHTML`; React escapes ordinary data.
+- `renderToStaticMarkup` produces body-only HTML. No hooks, browser APIs, hydration, or network requests are required. CSS is bundled into the published JS entry, so callers need neither a CSS loader nor a JSX compiler.
+- Register templates centrally; CLI build/preview select the same registry. Library callers can still supply a custom `ResumeTemplate` directly.
+- `classic` preserves its pre-migration layout for both densities and papers.
+- `blog` reproduces the reference blog resume document: system sans font, centered contact rows, company-first headings, right-aligned dates, ruled section headings, 14px screen/12px print body, and the source's screen/print padding. It has fixed responsive-media spacing; `compact` is rejected rather than ignored. To match the blog's visible content, use `--sections education,work`; other selected sections remain supported.
+- Blog dates render from canonical precision as YYYY, MM/YYYY, or MM/DD/YYYY with an en-dash range separator. Original punctuation is not retained in canonical data. The host owns navigation such as Back to Home. System font/platform differences can affect cross-machine rendering; pixel matching is verified in the same browser/font environment.
+- Contributor instructions and extension boundaries live in `packages/templates/README.md`. Template changes require validation/escaping tests and print checks. Personal comparison data remains outside the repository.
 
 ## Output contracts
 
@@ -68,7 +78,13 @@ The initial field contract is recorded in [schema.md](schema.md); the implementa
 | PDF                  | Generated from the same template HTML with print CSS; selectable text, working links, embedded fonts, explicit paper size/margins  |
 | HTML fragment (next) | Body-only `resume.html`, scoped `resume.css`, and relative `assets/`; no document shell, scripts, global reset, or site navigation |
 
-One layer owns page dimensions and margins. Wait for fonts/assets before PDF export; preserve content across page breaks. Identical input/configuration/tool versions must produce equivalent content and layout; byte-identical PDFs are not required.
+The document renderer owns page dimensions and margins: comfortable uses 16mm; compact uses 12mm, shared by screen document padding and print page margins. Classic is authored in React/TSX with separate scoped CSS, producing semantic static HTML. No client-side React or pagination runtime is shipped. The existing safe Markdown renderer handles inline text, and Chromium paginates PDF output.
+
+Classic density presets are fixed and explicit: comfortable uses 10.5pt/1.45 body text and a 27pt name; compact uses 9pt/1.25 body text and a 20pt name with tighter section, paragraph, list, and entry spacing. Compact takes inspiration from traditional dense print resumes. Neither preset removes content, scales dynamically, or promises a one-page result.
+
+Entries may split between bullets. Keep entry headings with the next content, avoid breaks inside headings and individual bullets, and apply widow/orphan protection to text. Oversized bullets may split when needed to fit a page. Section headings stay with following content. Both densities preserve the same section order, text, links, and semantics.
+
+Wait for fonts/assets before PDF export; preserve content across page breaks. Identical input/configuration/tool versions must produce equivalent content and layout; byte-identical PDFs are not required.
 
 Resolve local assets relative to the input/configuration location, not incidental process state. Missing assets fail with actionable diagnostics. MVP does not fetch remote assets implicitly. Output paths must stay within the selected output directory.
 
@@ -92,7 +108,7 @@ resume-sdk normalize resume.yaml --out resume.json
 - `init` writes documented, fictional starter data to `./resume.yaml`. Never overwrites, including symlinks; no `--force` option.
 - `validate <input>` checks canonical data and reports field-specific failures.
 - `build <input>` defaults to standalone HTML, classic template, Letter paper, all populated sections, and `./dist`. `--format` accepts `html`, `pdf`, or comma-separated `html,pdf` without duplicates. HTML-only builds do not load/start Chromium.
-- Build and preview share `--template classic`, `--paper letter|a4`, and `--sections <comma-separated-selection/order>`. Unknown/duplicate sections fail.
+- Build and preview share `--template classic|blog`, `--paper letter|a4`, `--density comfortable|compact`, and `--sections <comma-separated-selection/order>`. Unknown/duplicate sections fail.
 - Build writes `resume.html` and/or `resume.pdf`; creates missing directories and refuses overwrites unless `--force`. Never overwrites its input. Prepare all requested artifacts before writing files; multi-file writes are not transactional.
 - `build --json` emits one report on stdout: success `{ ok: true, files: [{ format, path }], diagnostics: [] }`; execution failure `{ ok: false, files: [], diagnostics: [{ severity, code, message }] }`. Paths are absolute. `files` on failure does not guarantee rollback of filesystem writes. Progress/errors go to stderr. Parser failures may occur before JSON mode is established.
 - `preview <input>` starts a server bound to `127.0.0.1`, default port 3000; `--port 0` selects an available port. `--open` opens the default browser. Port conflicts fail clearly; no automatic port switching.
@@ -114,7 +130,7 @@ resume-sdk normalize resume.yaml --out resume.json
 ## Verification and completion
 
 - Unit tests cover schema failures, normalization, provider mapping, and safe rich-text/link handling. Equivalent YAML/JSON fixtures normalize identically.
-- Integration tests exercise the CLI and library against fictional fixtures, including invalid input, missing assets, and overwrite protection.
+- Integration tests exercise the CLI and library against fictional fixtures, including invalid input, missing assets, and overwrite protection. PDF checks cover both densities on Letter/A4, entries longer than a page, headings attached to first bullets, text preservation, and content within printable bounds. Real personal resumes are tested locally, never added as public fixtures.
 - HTML works offline; PDF text extraction retains expected content. Review screenshots/rendered PDF pages for A4/Letter, long resumes, page breaks, fonts, and links. Do not rely on binary PDF snapshots alone.
 - When fragment output ships, demonstrate embedding in a plain HTML site and a React app with surrounding components.
 - `pnpm check` runs formatting, linting, build/type-checking, and tests. CI also runs CLI smoke checks; PDF tests install Chromium explicitly when introduced.

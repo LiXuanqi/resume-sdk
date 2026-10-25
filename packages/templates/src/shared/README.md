@@ -1,1 +1,1 @@
-Shared HTML escaping and restricted Markdown rendering. No website or framework dependencies.
+Shared React components for safe restricted-Markdown paragraphs/highlights and date helpers. Ordinary JSX data is escaped by React. Only allowlisted Markdown renderer output is inserted as HTML. No host website dependencies.

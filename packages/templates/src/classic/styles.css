@@ -1,0 +1,143 @@
+.resume-document {
+  color: #202b36;
+  font:
+    10.5pt/1.45 Arial,
+    Helvetica,
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+.resume-document,
+.resume-document * {
+  box-sizing: border-box;
+}
+.resume-document h1 {
+  font-size: 27pt;
+  line-height: 1.1;
+  letter-spacing: -0.6pt;
+  margin: 0 0 5pt;
+  color: #172b3e;
+}
+.resume-document h2 {
+  font-size: 10pt;
+  text-transform: uppercase;
+  letter-spacing: 1.2pt;
+  border-bottom: 1px solid #adb9c3;
+  padding-bottom: 4pt;
+  margin: 17pt 0 9pt;
+  break-after: avoid;
+}
+.resume-document h3 {
+  font-size: 11pt;
+  margin: 0;
+}
+.resume-document p {
+  margin: 3pt 0;
+}
+.resume-document a {
+  color: #254d70;
+  text-decoration: none;
+}
+.resume-document ul {
+  padding-left: 15pt;
+  margin: 6pt 0 0;
+}
+.resume-document li {
+  margin: 3pt 0;
+  break-inside: avoid;
+  orphans: 2;
+  widows: 2;
+}
+.resume-document__label {
+  font-size: 12pt;
+  color: #496073;
+}
+.resume-document__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3pt 12pt;
+  font-size: 9pt;
+  margin-top: 9pt;
+}
+.resume-document .resume-document__summary {
+  margin-top: 14pt;
+}
+.resume-document__entry {
+  margin-bottom: 11pt;
+  break-inside: auto;
+}
+.resume-document__entry-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12pt;
+  break-inside: avoid;
+  break-after: avoid;
+}
+.resume-document__entry-heading > div {
+  min-width: 0;
+}
+.resume-document__entry > p {
+  orphans: 2;
+  widows: 2;
+}
+.resume-document__entry > ul {
+  break-before: avoid;
+}
+.resume-document__date {
+  white-space: nowrap;
+  font-size: 9pt;
+  color: #496073;
+}
+.resume-document__subtitle {
+  color: #496073;
+}
+.resume-document--compact {
+  font-size: 9pt;
+  line-height: 1.25;
+}
+.resume-document--compact h1 {
+  font-size: 20pt;
+  margin-bottom: 3pt;
+}
+.resume-document--compact h2 {
+  font-size: 9.5pt;
+  letter-spacing: 0.8pt;
+  padding-bottom: 2pt;
+  margin: 10pt 0 5pt;
+}
+.resume-document--compact h3 {
+  font-size: 10pt;
+}
+.resume-document--compact p {
+  margin: 2pt 0;
+}
+.resume-document--compact ul {
+  margin-top: 3pt;
+  padding-left: 13pt;
+}
+.resume-document--compact li {
+  margin: 0;
+}
+.resume-document--compact .resume-document__label {
+  font-size: 10pt;
+}
+.resume-document--compact .resume-document__contact {
+  margin-top: 5pt;
+  gap: 2pt 10pt;
+}
+.resume-document--compact .resume-document__summary {
+  margin-top: 8pt;
+}
+.resume-document--compact .resume-document__entry {
+  margin-bottom: 6pt;
+}
+@media screen and (max-width: 540px) {
+  .resume-document__entry-heading {
+    display: block;
+  }
+}
+@media print {
+  .resume-document {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

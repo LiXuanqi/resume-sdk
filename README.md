@@ -8,9 +8,9 @@ Implementation source of truth: [docs/SPEC.md](docs/SPEC.md).
 
 ## Status
 
-Working vertical slice: YAML/JSON validation and normalization, a classic resume template, standalone offline HTML, and Playwright PDF export. Supports profile, work, education, projects, skills, restricted inline Markdown, section selection, and A4/Letter paper sizes. See [docs/schema.md](docs/schema.md) for the version-1 data contract.
+Working vertical slice: YAML/JSON validation and normalization, classic and blog templates, standalone offline HTML, and Playwright PDF export. Supports profile, work, education, projects, skills, restricted inline Markdown, section selection, and A4/Letter paper sizes. See [docs/schema.md](docs/schema.md) for the version-1 data contract.
 
-This is a small MVP, not the full specification. Custom fonts/images and asset packaging, fragment export, other templates/providers, React slots, and LLM tailoring remain unimplemented. The built-in template uses system fonts; Chromium embeds the selected fonts in the PDF, but appearance can vary between hosts.
+This is a small MVP, not the full specification. Custom fonts/images and asset packaging, fragment export, external providers, React slots, and LLM tailoring remain unimplemented. The built-in template uses system fonts; Chromium embeds the selected fonts in the PDF, but appearance can vary between hosts.
 
 ## Development
 
@@ -49,7 +49,7 @@ resume-sdk init                         # Create ./resume.yaml; never overwrite
 resume-sdk validate resume.yaml
 resume-sdk preview resume.yaml --open   # Localhost:3000, automatic refresh
 resume-sdk build resume.yaml            # HTML only → ./dist/resume.html
-resume-sdk build resume.yaml --format pdf --force
+resume-sdk build resume.yaml --format pdf --density compact --force
 resume-sdk build resume.yaml --format html,pdf --out artifacts --force --json
 resume-sdk normalize resume.yaml --out resume.json
 ```
@@ -60,9 +60,13 @@ HTML builds need no Chromium. Before PDF export, run from this workspace:
 pnpm --filter @resume-sdk/pdf exec playwright install chromium
 ```
 
-Build and preview share `--template classic`, `--paper letter|a4`, and `--sections work,education,projects,skills` (selection/order). Preview supports `--port <number>` (default 3000, 0 chooses a free port) and `--open`. It keeps output in memory, watches editor saves, and shows validation errors without discarding the last valid preview. Stop with Ctrl+C. PDF export is the reference for pagination.
+Build and preview share `--template classic|blog`, `--paper letter|a4`, `--density comfortable|compact`, and `--sections work,education,projects,skills` (selection/order). Preview supports `--port <number>` (default 3000, 0 chooses a free port) and `--open`. It keeps output in memory, watches editor saves, and shows validation errors without discarding the last valid preview. Stop with Ctrl+C. PDF export is the reference for pagination.
 
 Build supports `--format html|pdf|html,pdf`, `--out <directory>` (default `dist`), `--force`, and `--json`. JSON mode writes a result report with `ok`, `files`, and `diagnostics` to stdout; progress and errors go to stderr. Existing outputs are protected by default. Input files are never overwritten. Exit codes: 0 success, 1 execution/validation failure, 2 usage error. Use `--debug` for stacks.
+
+Built-in templates use React/TSX and separate CSS; exported documents require no React runtime. See [the template contributor guide](packages/templates/README.md). The `blog` template reproduces the blog resume layout; use `--template blog --sections education,work` for the matching section selection. It uses fixed screen/print spacing (`compact` is unsupported).
+
+Classic defaults to comfortable spacing (10.5pt body, 16mm margins). Compact uses fixed 9pt body text, 12mm margins, and tighter spacing. Both allow long entries to split between bullets while keeping headings with content. Compact preserves all selected content; it does not guarantee a single page.
 
 Exported HTML works offline without a server, React, or runtime JavaScript; preview adds development-only refresh code. Raw HTML in descriptions is escaped; Markdown emphasis and safe links are supported. All starter/example data is fictional. Config discovery, fragment export, and external imports are deferred.
 

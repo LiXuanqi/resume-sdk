@@ -1,6 +1,6 @@
 import { InvalidArgumentError, type Command } from "commander";
 import { resolve, join } from "node:path";
-import { renderDocument } from "@resume-sdk/renderer";
+import { renderDocument, getTemplate } from "@resume-sdk/renderer";
 import { presentationOptions, renderSettings, type PresentationOptions } from "../presentation.js";
 import { loadResume } from "../load.js";
 import { checkOutput, writeOutput } from "../output.js";
@@ -35,7 +35,7 @@ export function addBuild(program: Command) {
       for (const format of formats)
         await checkOutput(join(out, `resume.${format}`), !!options.force, input);
       const { resume } = await loadResume(input);
-      const html = renderDocument(resume, settings);
+      const html = renderDocument(resume, settings, getTemplate(options.template));
       // Generate all requested artifacts before writing any of them.
       const pdf = formats.includes("pdf")
         ? await (await import("@resume-sdk/pdf")).exportPdf(html)

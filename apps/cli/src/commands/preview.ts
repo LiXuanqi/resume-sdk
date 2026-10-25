@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { watchFile, unwatchFile } from "node:fs";
 import { resolve } from "node:path";
 import { spawn } from "node:child_process";
-import { renderDocument } from "@resume-sdk/renderer";
+import { renderDocument, getTemplate } from "@resume-sdk/renderer";
 import { loadResume } from "../load.js";
 import { presentationOptions, renderSettings, type PresentationOptions } from "../presentation.js";
 
@@ -43,7 +43,11 @@ export function addPreview(program: Command) {
       const settings = renderSettings(options);
       const file = resolve(input);
       // Initial errors fail immediately; later edit errors preserve the last good HTML.
-      let html = renderDocument((await loadResume(file)).resume, settings);
+      let html = renderDocument(
+        (await loadResume(file)).resume,
+        settings,
+        getTemplate(options.template),
+      );
       let revision = 0;
       let error = "";
       let queue = Promise.resolve();
@@ -52,7 +56,11 @@ export function addPreview(program: Command) {
         queue = queue.then(async () => {
           if (closed) return;
           try {
-            const next = renderDocument((await loadResume(file)).resume, settings);
+            const next = renderDocument(
+              (await loadResume(file)).resume,
+              settings,
+              getTemplate(options.template),
+            );
             if (next !== html) {
               html = next;
               revision++;

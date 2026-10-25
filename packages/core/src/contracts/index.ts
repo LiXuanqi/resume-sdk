@@ -15,6 +15,7 @@ export interface ResumeProvider<Input = string> {
 }
 export interface RenderOptions {
   paper: "a4" | "letter";
+  density?: "comfortable" | "compact";
   sections?: Section[];
 }
 export interface ResumeAsset {
@@ -23,6 +24,8 @@ export interface ResumeAsset {
   mediaType: string;
 }
 export interface RenderedFragment {
+  /** Optional standalone shell; fragment consumers use only html/css/assets. */
+  document?: { marginMm: number; css: string };
   html: string;
   css: string;
   assets: ResumeAsset[];

@@ -81,6 +81,7 @@ export const sectionSchema = z.enum(["work", "education", "projects", "skills"])
 export type Section = z.infer<typeof sectionSchema>;
 export const renderOptionsSchema = z
   .object({
+    density: z.enum(["comfortable", "compact"]).default("comfortable"),
     paper: z.enum(["a4", "letter"]).default("letter"),
     sections: z
       .array(sectionSchema)

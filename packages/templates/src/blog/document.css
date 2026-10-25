@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  padding: 32px 0;
+  background: white;
+  color-scheme: light;
+}
+.resume-document.resume-blog {
+  max-width: 210mm;
+  margin: auto;
+  padding: 0;
+  background: white;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+@media print {
+  body {
+    padding: 0;
+  }
+  .resume-document.resume-blog {
+    max-width: none;
+    box-shadow: none;
+  }
+}

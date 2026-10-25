@@ -155,3 +155,57 @@ it("previews edits, preserves good output on errors, recovers, and stops cleanly
     }
   }
 }, 20000);
+
+it("supports compact density and rejects invalid densities", () => {
+  const out = temp();
+  run("build", "examples/resume.yaml", "--density", "compact", "--out", out);
+  const html = readFileSync(join(out, "resume.html"), "utf8");
+  expect(html).toContain("resume-document--compact");
+  expect(html).toContain("margin: 12mm");
+  expect(html).toContain("Alex Morgan");
+  for (const command of ["build", "preview"])
+    expect(
+      spawnSync(process.execPath, [cli, command, "examples/resume.yaml", "--density", "tiny"])
+        .status,
+    ).toBe(2);
+});
+
+it("selects the blog template with packaged CSS and safe TSX text", () => {
+  const dir = temp();
+  const input = join(dir, "resume.json");
+  writeFileSync(
+    input,
+    JSON.stringify({
+      schemaVersion: "1",
+      basics: {
+        name: '<img src=x onerror="alert(1)">',
+        location: "Example City",
+        phone: "123",
+        email: "alex@example.com",
+      },
+      education: [{ institution: "Example University", startDate: "2020-09", endDate: "2022-06" }],
+      work: [
+        {
+          name: "Example Co",
+          position: "Engineer",
+          highlights: ["**Safe bold** and <script>alert(1)</script>"],
+        },
+      ],
+    }),
+  );
+  const out = join(dir, "blog");
+  run("build", input, "--template", "blog", "--sections", "education,work", "--out", out);
+  const html = readFileSync(join(out, "resume.html"), "utf8");
+  expect(html).toContain("resume-blog");
+  expect(html).toContain("margin: 0mm");
+  expect(html).toContain("ui-sans-serif");
+  expect(html).toContain("Example Co, Engineer");
+  expect(html).toContain("09/2020 – 06/2022");
+  expect(html).toContain("<strong>Safe bold</strong>");
+  expect(html).not.toMatch(/<script|<img|<link/);
+  expect(html.indexOf("<h2>Education")).toBeLessThan(html.indexOf("<h2>Work Experience"));
+  expect(() => run("build", input, "--template", "unknown")).toThrow(/Command failed/);
+  expect(() => run("build", input, "--template", "blog", "--density", "compact")).toThrow(
+    /Command failed/,
+  );
+});
