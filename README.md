@@ -57,8 +57,10 @@ resume-sdk normalize resume.yaml --out resume.json
 HTML builds need no Chromium. Before PDF export, run from this workspace:
 
 ```sh
-pnpm --filter @resume-sdk/pdf exec playwright install chromium
+pnpm cli install-browser
 ```
+
+Installed consumers run `resume-sdk install-browser`. Add `--with-deps` on Linux to install system libraries, which may require elevated privileges. Library callers can use `installBrowser({ withDeps: false })` from `@resume-sdk/pdf`. The installer uses that package's Playwright version and inherits its cache/proxy environment. Builds never install browsers automatically.
 
 Build and preview share `--template classic|blog`, `--paper letter|a4`, `--density comfortable|compact`, and `--sections work,education,projects,skills` (selection/order). Preview supports `--port <number>` (default 3000, 0 chooses a free port) and `--open`. It keeps output in memory, watches editor saves, and shows validation errors without discarding the last valid preview. Stop with Ctrl+C. PDF export is the reference for pagination.
 
@@ -88,7 +90,7 @@ Pass only trusted SDK-generated HTML. See [runnable HTML and React examples](exa
 
 `--mode document` remains the default. Fragment mode is HTML-only; generate PDF separately. Styles are scoped outward, but host resets can still affect the resume. Variables `--resume-sdk-font-family`, `--resume-sdk-color`, and `--resume-sdk-link-color` support basic theming. Global CSS at-rules and CSS nesting are unsupported in fragments. Standalone page CSS is excluded.
 
-`pnpm test` builds first and runs schema, safe-text, and CLI integration tests. `pnpm test:pdf` additionally requires installed Chromium and Poppler (`pdfinfo`, `pdftotext`, `pdffonts`) and checks multi-page A4/Letter exports, extracted content, fonts, and links. On Linux CI, browser installation uses `playwright install --with-deps chromium`.
+`pnpm test` builds first and runs schema, safe-text, and CLI integration tests. `pnpm test:pdf` additionally requires installed Chromium and Poppler (`pdfinfo`, `pdftotext`, `pdffonts`) and checks multi-page A4/Letter exports, extracted content, fonts, and links. On Linux CI, browser installation uses `pnpm cli install-browser --with-deps`.
 
 `pnpm test:embed` additionally checks both fragments together in Chromium, including host-style isolation and print rules. It uses the same installed browser as PDF tests.
 
@@ -107,3 +109,7 @@ Formatting uses two spaces, double quotes, semicolons, trailing commas, LF line 
 `pnpm install` installs Husky through the root `prepare` script. The pre-commit hook runs lint-staged: JavaScript/TypeScript files receive safe lint fixes followed by formatting; supported data, styles, and documentation files receive formatting. Remaining lint errors block the commit. lint-staged handles partially staged files and stages fixes automatically. Full builds and tests run in CI rather than on every commit.
 
 CI sets `HUSKY=0` to skip hook installation and runs the same checks explicitly.
+
+## Packaged consumer checks
+
+Run `pnpm test:package` to build and pack all six packages, then install them in a temporary project outside the workspace. The check verifies the installed CLI, public TypeScript declarations, providers, both templates, HTML, fragments, browser installation, and PDF export. Local overrides resolve unpublished SDK dependencies to the same tarball set. Third-party dependencies may require network access. The temporary project is removed afterward. CI runs this check after installing browser system libraries. This command does not publish packages or change their private status.

@@ -17,7 +17,8 @@
     "prepare": "husky",
     "pretest": "pnpm build",
     "test:pdf": "node tests/integration/pdf-smoke.mjs",
-    "test:embed": "node tests/integration/embed-smoke.mjs"
+    "test:embed": "node tests/integration/embed-smoke.mjs",
+    "test:package": "pnpm build && node tests/integration/packaged-consumer.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

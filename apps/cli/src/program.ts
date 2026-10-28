@@ -4,6 +4,7 @@ import { addValidate } from "./commands/validate.js";
 import { addNormalize } from "./commands/normalize.js";
 import { addBuild } from "./commands/build.js";
 import { addInit } from "./commands/init.js";
+import { addInstallBrowser } from "./commands/install-browser.js";
 import { addPreview } from "./commands/preview.js";
 
 export function createProgram() {
@@ -26,6 +27,7 @@ Examples:
   resume-sdk build resume.yaml --format html,pdf
 `,
     );
+  addInstallBrowser(program);
   addInit(program);
   addValidate(program);
   addNormalize(program);

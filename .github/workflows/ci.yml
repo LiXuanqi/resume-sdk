@@ -27,9 +27,11 @@ jobs:
       - run: node apps/cli/dist/index.js normalize examples/resume.json
       - name: Install PDF test dependencies
         run: |
-          pnpm --filter @resume-sdk/pdf exec playwright install --with-deps chromium
+          pnpm cli install-browser --with-deps
           sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: PDF integration checks
         run: pnpm test:pdf
       - name: Fragment embedding checks
         run: pnpm test:embed
+      - name: Packaged consumer checks
+        run: pnpm test:package
