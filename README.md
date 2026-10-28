@@ -117,3 +117,5 @@ Run `pnpm test:package` to build and pack all six packages, then install them in
 ## Release preparation
 
 The unpublished candidate version is `0.1.0-beta.1` across all six packages. Run `pnpm release:prepare` to build private candidate tarballs and checksums. The manual **Prepare release candidate** workflow runs validation and uploads these artifacts without publishing. See [the release guide](docs/releasing.md) and [release notes](CHANGELOG.md).
+
+Run `pnpm release:preflight` for a read-only npm account, scope, and package-version check before an authorized publication. Each package includes its own consumer README. The [first-release runbook](docs/releasing.md#first-release-runbook) describes the remaining publication steps; no automated publishing job is enabled.

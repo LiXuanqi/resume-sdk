@@ -1,8 +1,28 @@
-# Authoring templates
+# @resume-sdk/templates
+
+Requires Node.js 24 or later. ESM only. The `0.1.0-beta.1` candidate is not published yet; the registry installation commands below apply after publication.
+
+Built-in classic and blog templates that return static HTML and CSS through the framework-neutral template contract. React and TSX are internal authoring details; exported resumes need no client-side React runtime.
+
+```sh
+npm install @resume-sdk/core@0.1.0-beta.1 @resume-sdk/templates@0.1.0-beta.1
+```
+
+```js
+import { validateResume } from "@resume-sdk/core";
+import { classicTemplate, blogTemplate, getTemplate } from "@resume-sdk/templates";
+
+const resume = validateResume({ schemaVersion: "1", basics: { name: "Alex Example" } });
+const output = classicTemplate.render(resume, { paper: "letter", density: "compact" });
+```
+
+Direct rendering returns template markup, CSS, assets, and optional document metadata. Use `@resume-sdk/renderer` for a complete document or an embedding-safe scoped fragment. Classic supports comfortable and compact density. Blog supports comfortable density only. Both support section selection and Letter/A4 output.
+
+## Authoring templates
 
 Built-ins use React + TSX for readable typed components and separate CSS files for styling. Consumers receive ordinary HTML/CSS/assets; they do not need React in their website or a JSX/CSS build pipeline.
 
-## Layout
+### Layout
 
 ```text
 src/
@@ -15,7 +35,7 @@ src/
   index.ts            Built-in registry
 ```
 
-## Add a template
+### Add a template
 
 1. Create `<id>/index.tsx` exporting a `ResumeTemplate`. Validate input and options; return `renderToStaticMarkup(<YourResume />)` as `html`, imported CSS as `css`, and `assets: []`.
 2. Scope fragment CSS to the template's root class. Keep all paper padding/minimum heights in the standalone shell. Fragment CSS supports flat rules plus `@media`/`@supports`; other at-rules/nesting currently fail. Global body/page-shell rules belong in the optional `document: { marginMm, css }` field, which fragment consumers must omit. Let the document renderer emit page size/margins.
@@ -28,3 +48,7 @@ src/
 ## Framework-neutral boundary
 
 `ResumeTemplate` lives in core and references only canonical data, render options, and string/binary artifacts. A plain JavaScript template remains valid. React components are internal implementation details, not the public template contract. Vue support would require a separate adapter/build recipe and an explicit decision about asynchronous rendering; it is not implemented here.
+
+## License
+
+MIT. Copyright (c) 2026 Xuanqi Li. See [LICENSE](LICENSE).

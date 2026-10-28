@@ -62,6 +62,10 @@ try {
     for (const [dependency, version] of Object.entries(manifest.dependencies ?? {})) {
       if (dependency in dependencies) assert.equal(version, releaseVersion);
     }
+    const readme = readFileSync(join(consumer, "node_modules", name, "README.md"), "utf8");
+    assert(readme.includes(name), `${name} needs its own consumer README`);
+    assert(readme.includes("npm install"));
+    assert(readme.includes(releaseVersion));
     assert.equal(manifest.license, "MIT");
     assert.equal(manifest.author, "Xuanqi Li");
     assert.equal(manifest.repository.url, "git+https://github.com/LiXuanqi/resume-sdk.git");

@@ -37,7 +37,8 @@
     "test:pdf": "node tests/integration/pdf-smoke.mjs",
     "test:embed": "node tests/integration/embed-smoke.mjs",
     "test:package": "pnpm build && node tests/integration/packaged-consumer.mjs",
-    "release:prepare": "pnpm build && node scripts/prepare-release.mjs"
+    "release:prepare": "pnpm build && node scripts/prepare-release.mjs",
+    "release:preflight": "node scripts/release-preflight.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
