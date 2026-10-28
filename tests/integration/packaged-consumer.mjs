@@ -57,6 +57,7 @@ try {
   for (const name of Object.keys(dependencies)) {
     const manifest = json(join(consumer, "node_modules", name, "package.json"));
     assert.equal(manifest.version, releaseVersion);
+    assert.notEqual(manifest.private, true);
     assert.equal(manifest.publishConfig.tag, "beta");
     assert.equal(manifest.publishConfig.access, "public");
     for (const [dependency, version] of Object.entries(manifest.dependencies ?? {})) {

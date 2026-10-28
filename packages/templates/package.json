@@ -1,7 +1,6 @@
 {
   "name": "@resume-sdk/templates",
   "version": "0.1.0-beta.1",
-  "private": true,
   "description": "Classic and blog resume templates with static HTML and CSS output.",
   "keywords": [
     "cv",

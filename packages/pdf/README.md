@@ -1,6 +1,6 @@
 # @resume-sdk/pdf
 
-Requires Node.js 24 or later. ESM only. The `0.1.0-beta.1` candidate is not published yet; the registry installation commands below apply after publication.
+Requires Node.js 24 or later. ESM only. The beta version is `0.1.0-beta.1`.
 
 Export trusted resume HTML to PDF using Playwright Chromium. The caller receives bytes and controls file storage.
 

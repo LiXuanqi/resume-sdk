@@ -1,7 +1,6 @@
 {
   "name": "@resume-sdk/renderer",
   "version": "0.1.0-beta.1",
-  "private": true,
   "description": "Render resume data as standalone HTML or embeddable fragments with scoped CSS.",
   "keywords": [
     "cv",

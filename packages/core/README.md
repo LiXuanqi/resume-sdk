@@ -1,6 +1,6 @@
 # @resume-sdk/core
 
-Requires Node.js 24 or later. ESM only. The `0.1.0-beta.1` candidate is not published yet; the registry installation commands below apply after publication.
+Requires Node.js 24 or later. ESM only. The beta version is `0.1.0-beta.1`.
 
 Canonical resume schema, runtime validation, and framework-neutral provider and template contracts. No filesystem or browser dependency.
 

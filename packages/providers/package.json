@@ -1,7 +1,6 @@
 {
   "name": "@resume-sdk/providers",
   "version": "0.1.0-beta.1",
-  "private": true,
   "description": "JSON and YAML providers for canonical resume data.",
   "keywords": [
     "cv",

@@ -1,6 +1,6 @@
 # @resume-sdk/templates
 
-Requires Node.js 24 or later. ESM only. The `0.1.0-beta.1` candidate is not published yet; the registry installation commands below apply after publication.
+Requires Node.js 24 or later. ESM only. The beta version is `0.1.0-beta.1`.
 
 Built-in classic and blog templates that return static HTML and CSS through the framework-neutral template contract. React and TSX are internal authoring details; exported resumes need no client-side React runtime.
 

@@ -1,7 +1,6 @@
 {
   "name": "@resume-sdk/pdf",
   "version": "0.1.0-beta.1",
-  "private": true,
   "description": "Export resume HTML to PDF with Playwright and install its required Chromium browser.",
   "keywords": [
     "cv",

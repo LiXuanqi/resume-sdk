@@ -26,21 +26,11 @@ After the workflow is committed and pushed, select **Prepare release candidate**
 
 This workflow has read-only repository permissions. It contains no publication command, npm token, OIDC permission, tag creation, or GitHub release creation. Pushing a commit or tag does not trigger it.
 
-## Publication remains disabled
+## Publication
 
-Each package retains `private: true`. Its `publishConfig` declares the intended public access, `beta` distribution tag, and npm registry, but does not enable publishing. These private candidate archives are for review and local installation. Do not treat them as ready-to-publish artifacts.
+The six release packages have publishable manifests. The workspace root stays private. `release:prepare` requires publishable packages, but never publishes them. Publication is an explicit manual step using the npm organization owner's login.
 
-Before the first authorized publication:
-
-1. Recheck ownership of the unscoped `resume-sdk` name. Ownership of `@resume-sdk` does not reserve it.
-2. Review the consumer README included in each tarball and the release notes.
-3. Explicitly authorize publication, then remove the private guards from the six packages while keeping the root private. Update the preparation guard at the same time.
-4. Rebuild, inspect, and retest the final publishable archives. The current private archives will differ from those final archives.
-5. Choose first-release authentication. npm trusted-publisher configuration is attached to individual package settings, so do not assume organization ownership alone enables a first OIDC publication.
-6. Use the interactive first-release runbook below. Publish in dependency order: core, providers, templates, renderer, pdf, then CLI. Use public access and the beta tag explicitly. Multi-package publication is not atomic; record which versions succeeded before retrying a partial release. Configure a separately approved CI publishing job for subsequent releases.
-7. Install the registry versions into a fresh consumer without local overrides and repeat the integration checks.
-
-For subsequent automated publishing, configure each package's trusted publisher for GitHub owner `LiXuanqi`, repository `resume-sdk`, and the actual publishing workflow filename and environment. npm requires a supported npm CLI and Node version. Follow the [npm trusted publishing instructions](https://docs.npmjs.com/trusted-publishers/) when enabling this job. No publishing credentials or remote settings have been configured by this preparation work.
+Use public access and the `beta` tag. Publish in dependency order, core, providers, templates, renderer, pdf, then CLI. Multi-package publication is not atomic. Record successful versions before retrying a partial release.
 
 ## Check account access before publication
 
@@ -50,11 +40,11 @@ Run `pnpm release:preflight` while logged in to npm. This read-only command chec
 
 The recommended first-release method is an interactive npm publication by the organization owner. It avoids placing a long-lived publishing token in GitHub. Complete npm's required authentication prompts in the terminal or browser. Do not paste passwords, tokens, or one-time codes into chat.
 
-These are future steps. Do not execute publication commands until the release has been explicitly authorized.
+Execute publication commands only after the release has been explicitly authorized.
 
 1. Run the preflight and confirm the six candidate versions are not already published. Confirm the account's email and publishing authentication are ready in npm account settings.
-2. On a release-preparation commit, remove `private` from the six package manifests. Keep the root private. Change `prepare-release.mjs` to require publishable package manifests instead of private ones. Review these edits before using them.
-3. Commit the changes and run CI. Prepare fresh archives from that exact clean commit. Require `dirty: false` in their manifest. Recheck license files, README files, exports, internal dependency versions, and checksums. The current private candidates cannot be reused.
+2. Confirm all six package manifests are publishable and the root remains private. Review the consumer README files and release notes.
+3. Commit the changes and run CI. Prepare fresh archives from that exact clean commit. Require `dirty: false` in their manifest. Recheck license files, README files, exports, internal dependency versions, and checksums. Do not reuse archives from an earlier preparation commit.
 4. Run the following commands from the final artifact directory. Stop on the first failure. Publish dependencies before the packages that use them.
 
 ```sh

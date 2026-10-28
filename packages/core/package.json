@@ -1,7 +1,6 @@
 {
   "name": "@resume-sdk/core",
   "version": "0.1.0-beta.1",
-  "private": true,
   "description": "Canonical resume schema, validation, and provider and template contracts.",
   "keywords": [
     "cv",

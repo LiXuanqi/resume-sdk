@@ -22,7 +22,7 @@ assert.match(version, /^\d+\.\d+\.\d+-beta\.\d+$/);
 const license = readFileSync(join(root, "LICENSE"), "utf8");
 for (const [index, manifest] of manifests.entries()) {
   assert.equal(manifest.version, version, "All packages must share the candidate version");
-  assert.equal(manifest.private, true, "Preparation keeps publishing disabled");
+  assert.notEqual(manifest.private, true, "Release packages must be publishable");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.equal(manifest.publishConfig.access, "public");
   assert.equal(manifest.publishConfig.registry, "https://registry.npmjs.org/");
@@ -63,7 +63,7 @@ try {
     artifacts.map(({ sha256, file }) => `${sha256}  ${file}`).join("\n") + "\n",
   );
   console.log(
-    `Prepared ${artifacts.length} private candidate tarballs in ${destination}. Nothing published.`,
+    `Prepared ${artifacts.length} candidate tarballs in ${destination}. Nothing published.`,
   );
 } finally {
   rmSync(temporary, { recursive: true, force: true });

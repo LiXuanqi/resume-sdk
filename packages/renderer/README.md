@@ -1,6 +1,6 @@
 # @resume-sdk/renderer
 
-Requires Node.js 24 or later. ESM only. The `0.1.0-beta.1` candidate is not published yet; the registry installation commands below apply after publication.
+Requires Node.js 24 or later. ESM only. The beta version is `0.1.0-beta.1`.
 
 Render canonical resume data into standalone HTML or body-only HTML with scoped CSS. Chromium is not required.
 
