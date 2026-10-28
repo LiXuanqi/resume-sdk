@@ -1,6 +1,6 @@
 {
   "name": "@resume-sdk/templates",
-  "version": "0.0.0",
+  "version": "0.1.0-beta.1",
   "private": true,
   "description": "Classic and blog resume templates with static HTML and CSS output.",
   "keywords": [
@@ -31,6 +31,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "beta"
   },
   "scripts": {
     "build": "node build.mjs",

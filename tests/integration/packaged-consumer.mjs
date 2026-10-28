@@ -53,8 +53,15 @@ try {
   );
   run("pnpm", ["install", "--ignore-scripts", "--no-frozen-lockfile"]);
   run("pnpm", ["install", "--ignore-scripts", "--frozen-lockfile", "--offline"]);
+  const releaseVersion = json(join(root, "apps/cli/package.json")).version;
   for (const name of Object.keys(dependencies)) {
     const manifest = json(join(consumer, "node_modules", name, "package.json"));
+    assert.equal(manifest.version, releaseVersion);
+    assert.equal(manifest.publishConfig.tag, "beta");
+    assert.equal(manifest.publishConfig.access, "public");
+    for (const [dependency, version] of Object.entries(manifest.dependencies ?? {})) {
+      if (dependency in dependencies) assert.equal(version, releaseVersion);
+    }
     assert.equal(manifest.license, "MIT");
     assert.equal(manifest.author, "Xuanqi Li");
     assert.equal(manifest.repository.url, "git+https://github.com/LiXuanqi/resume-sdk.git");

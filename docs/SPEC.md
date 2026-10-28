@@ -149,3 +149,9 @@ resume-sdk normalize resume.yaml --out resume.json
 - Pre-commit runs safe lint fixes and formatting on staged files only. Keep full builds/tests in CI.
 
 MVP is complete when a fresh checkout can validate either supported source, export normalized JSON, and generate a usable standalone HTML resume and upload-ready PDF without blog-specific code or services.
+
+## Release preparation
+
+The initial unpublished candidate is `0.1.0-beta.1` for all six SDK packages. Internal `workspace:*` dependencies pack to that exact version. Package metadata specifies public access, the `beta` tag, and the npm registry. All packages remain private until publication is explicitly authorized. The non-published workspace root stays private at `0.0.0`.
+
+`pnpm release:prepare` builds and packs the candidate, checks coordinated versions and license/publication metadata, and writes tarballs with SHA-256 checksums and Git source state under `dist/release/<version>/`. The manual `release.yml` workflow runs the existing checks and uploads artifacts only. It has no publication command or credentials. Private candidate archives require a later, authorized metadata change and rebuild before publication. First-release authentication and subsequent per-package trusted publishing remain setup work. See [releasing.md](releasing.md).

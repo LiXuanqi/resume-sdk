@@ -94,7 +94,7 @@ Pass only trusted SDK-generated HTML. See [runnable HTML and React examples](exa
 
 `pnpm test:embed` additionally checks both fragments together in Chromium, including host-style isolation and print rules. It uses the same installed browser as PDF tests.
 
-All packages are private to prevent accidental publishing. Source repository: [LiXuanqi/resume-sdk](https://github.com/LiXuanqi/resume-sdk). No npm scope or package has been created or reserved. Licensed under [MIT](LICENSE), Copyright (c) 2026 Xuanqi Li. Each package includes the full license.
+All packages are private to prevent accidental publishing. Source repository: [LiXuanqi/resume-sdk](https://github.com/LiXuanqi/resume-sdk). The `@resume-sdk` organization is owned by npm account `1_x7`; individual packages remain unpublished, and the unscoped CLI name is not reserved. Licensed under [MIT](LICENSE), Copyright (c) 2026 Xuanqi Li. Each package includes the full license.
 
 ## Linting, formatting, and commit hooks
 
@@ -113,3 +113,7 @@ CI sets `HUSKY=0` to skip hook installation and runs the same checks explicitly.
 ## Packaged consumer checks
 
 Run `pnpm test:package` to build and pack all six packages, then install them in a temporary project outside the workspace. The check verifies the installed CLI, public TypeScript declarations, providers, both templates, HTML, fragments, browser installation, and PDF export. Local overrides resolve unpublished SDK dependencies to the same tarball set. Third-party dependencies may require network access. The temporary project is removed afterward. CI runs this check after installing browser system libraries. This command does not publish packages or change their private status.
+
+## Release preparation
+
+The unpublished candidate version is `0.1.0-beta.1` across all six packages. Run `pnpm release:prepare` to build private candidate tarballs and checksums. The manual **Prepare release candidate** workflow runs validation and uploads these artifacts without publishing. See [the release guide](docs/releasing.md) and [release notes](CHANGELOG.md).

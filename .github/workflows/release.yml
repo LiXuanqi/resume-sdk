@@ -1,0 +1,37 @@
+name: Prepare release candidate
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release-candidate-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  HUSKY: "0"
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Install browser and PDF test dependencies
+        run: |
+          pnpm cli install-browser --with-deps
+          sudo apt-get update && sudo apt-get install -y poppler-utils
+      - run: pnpm test:pdf
+      - run: pnpm test:embed
+      - run: pnpm test:package
+      - run: pnpm release:prepare
+      - name: Upload candidate tarballs and checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-sdk-candidate-${{ github.sha }}
+          path: dist/release/
+          if-no-files-found: error
+          retention-days: 14
