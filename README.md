@@ -94,7 +94,7 @@ Pass only trusted SDK-generated HTML. See [runnable HTML and React examples](exa
 
 `pnpm test:embed` additionally checks both fragments together in Chromium, including host-style isolation and print rules. It uses the same installed browser as PDF tests.
 
-All packages are private to prevent accidental publishing. Source repository: [LiXuanqi/resume-sdk](https://github.com/LiXuanqi/resume-sdk). No npm scope or package has been created or reserved. Choose a license before publishing.
+All packages are private to prevent accidental publishing. Source repository: [LiXuanqi/resume-sdk](https://github.com/LiXuanqi/resume-sdk). No npm scope or package has been created or reserved. Licensed under [MIT](LICENSE), Copyright (c) 2026 Xuanqi Li. Each package includes the full license.
 
 ## Linting, formatting, and commit hooks
 

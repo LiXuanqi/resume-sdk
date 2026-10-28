@@ -2,8 +2,28 @@
   "name": "@resume-sdk/templates",
   "version": "0.0.0",
   "private": true,
+  "description": "Classic and blog resume templates with static HTML and CSS output.",
+  "keywords": [
+    "cv",
+    "html",
+    "pdf",
+    "resume",
+    "typescript"
+  ],
+  "homepage": "https://github.com/LiXuanqi/resume-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/LiXuanqi/resume-sdk/issues"
+  },
+  "license": "MIT",
+  "author": "Xuanqi Li",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LiXuanqi/resume-sdk.git",
+    "directory": "packages/templates"
+  },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "type": "module",
   "exports": {

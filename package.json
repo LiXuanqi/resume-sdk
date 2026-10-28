@@ -2,6 +2,24 @@
   "name": "resume-sdk-workspace",
   "version": "0.0.0",
   "private": true,
+  "description": "Portable resume generation with validated data, templates, HTML, and PDF.",
+  "keywords": [
+    "cv",
+    "html",
+    "pdf",
+    "resume",
+    "typescript"
+  ],
+  "homepage": "https://github.com/LiXuanqi/resume-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/LiXuanqi/resume-sdk/issues"
+  },
+  "license": "MIT",
+  "author": "Xuanqi Li",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LiXuanqi/resume-sdk.git"
+  },
   "type": "module",
   "scripts": {
     "build": "pnpm -r --if-present build",

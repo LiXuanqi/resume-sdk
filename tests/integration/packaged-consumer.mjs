@@ -55,6 +55,18 @@ try {
   run("pnpm", ["install", "--ignore-scripts", "--frozen-lockfile", "--offline"]);
   for (const name of Object.keys(dependencies)) {
     const manifest = json(join(consumer, "node_modules", name, "package.json"));
+    assert.equal(manifest.license, "MIT");
+    assert.equal(manifest.author, "Xuanqi Li");
+    assert.equal(manifest.repository.url, "git+https://github.com/LiXuanqi/resume-sdk.git");
+    assert(packages.includes(manifest.repository.directory));
+    assert.equal(manifest.homepage, "https://github.com/LiXuanqi/resume-sdk#readme");
+    assert.equal(manifest.bugs.url, "https://github.com/LiXuanqi/resume-sdk/issues");
+    assert(manifest.description.length > 0);
+    assert.equal(
+      readFileSync(join(consumer, "node_modules", name, "LICENSE"), "utf8"),
+      readFileSync(join(root, "LICENSE"), "utf8"),
+      `${name} must ship the complete root license`,
+    );
     for (const value of Object.values(manifest.dependencies ?? {}))
       assert(!value.startsWith("workspace:"));
   }

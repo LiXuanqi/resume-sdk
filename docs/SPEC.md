@@ -27,7 +27,7 @@ Source, template, and output are independent choices. A template must not depend
 | `packages/pdf`       | Playwright/Chromium export of rendered HTML                         | Browser installation and execution explicit             |
 | `apps/cli`           | File I/O, selection, orchestration, diagnostics                     | Calls library APIs; no duplicated rendering logic       |
 
-Use pnpm workspaces, Node.js 24 LTS baseline, TypeScript strict mode, and ESM. Publish JavaScript and type declarations. Built-in templates use React/TSX and `react-dom/server` static rendering; esbuild compiles separate CSS files into strings at package build time. React stays inside the template package; output consumers must not need React. Consumers can use any npm-compatible package manager. Public package names/scopes and licensing must be settled before publishing.
+Use pnpm workspaces, Node.js 24 LTS baseline, TypeScript strict mode, and ESM. Publish JavaScript and type declarations. Built-in templates use React/TSX and `react-dom/server` static rendering; esbuild compiles separate CSS files into strings at package build time. React stays inside the template package; output consumers must not need React. Consumers can use any npm-compatible package manager. The repository and all six packages use the MIT license, Copyright (c) 2026 Xuanqi Li. Each package includes a LICENSE file identical to the root license and declares `license: "MIT"`, author, description, repository location, homepage, and issue tracker metadata. Public package names/scopes must be settled before publishing.
 
 ## Canonical data
 
