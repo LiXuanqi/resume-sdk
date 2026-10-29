@@ -1,16 +1,16 @@
-# @resume-sdk/renderer
+# @resume-sdk/core/renderer
 
-Requires Node.js 24 or later. ESM only. The beta version is `0.1.0-beta.1`.
+Requires Node.js 24 or later. ESM only. Beta version `0.1.0-beta.2`.
 
 Render canonical resume data into standalone HTML or body-only HTML with scoped CSS. Chromium is not required.
 
 ```sh
-npm install @resume-sdk/core@0.1.0-beta.1 @resume-sdk/renderer@0.1.0-beta.1
+npm install @resume-sdk/core@0.1.0-beta.2
 ```
 
 ```js
 import { validateResume } from "@resume-sdk/core";
-import { renderDocument, renderFragment, getTemplate } from "@resume-sdk/renderer";
+import { renderDocument, renderFragment, getTemplate } from "@resume-sdk/core/renderer";
 
 const resume = validateResume({ schemaVersion: "1", basics: { name: "Alex Example" } });
 const options = { paper: "letter", sections: ["education", "work"] };
@@ -27,4 +27,4 @@ Output needs no client-side React runtime. Scoping prevents outward style leakag
 
 ## License
 
-MIT. Copyright (c) 2026 Xuanqi Li. See [LICENSE](LICENSE).
+MIT. Copyright (c) 2026 Xuanqi Li. See [LICENSE](../LICENSE).

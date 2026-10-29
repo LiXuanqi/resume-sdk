@@ -1,6 +1,6 @@
 import { InvalidArgumentError, Option, type Command } from "commander";
 import { resolve, join } from "node:path";
-import { renderDocument, renderFragment, getTemplate } from "@resume-sdk/renderer";
+import { renderDocument, renderFragment, getTemplate } from "@resume-sdk/core/renderer";
 import { presentationOptions, renderSettings, type PresentationOptions } from "../presentation.js";
 import { loadResume } from "../load.js";
 import { checkOutput, writeOutput } from "../output.js";
@@ -57,7 +57,7 @@ export function addBuild(program: Command) {
       } else {
         const html = renderDocument(resume, settings, template);
         const pdf = formats.includes("pdf")
-          ? await (await import("@resume-sdk/pdf")).exportPdf(html)
+          ? await (await import("../pdf/index.js")).exportPdf(html)
           : undefined;
         for (const format of formats)
           artifacts.push({ format, content: format === "html" ? html : pdf! });

@@ -7,8 +7,8 @@ import {
   type ResumeTemplate,
   type RenderOptions,
   type RenderedFragment,
-} from "@resume-sdk/core";
-import { classicTemplate } from "@resume-sdk/templates";
+} from "../index.js";
+import { classicTemplate } from "../templates/index.js";
 
 export type EmbeddedResume = Pick<RenderedFragment, "html" | "css" | "assets">;
 

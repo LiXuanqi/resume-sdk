@@ -6,14 +6,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const directories = [
-  "packages/core",
-  "packages/providers",
-  "packages/templates",
-  "packages/renderer",
-  "packages/pdf",
-  "apps/cli",
-];
+const directories = ["packages/core", "apps/cli"];
 const manifests = directories.map((directory) =>
   JSON.parse(readFileSync(join(root, directory, "package.json"), "utf8")),
 );

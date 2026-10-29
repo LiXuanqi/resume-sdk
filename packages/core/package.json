@@ -1,7 +1,7 @@
 {
   "name": "@resume-sdk/core",
-  "version": "0.1.0-beta.1",
-  "description": "Canonical resume schema, validation, and provider and template contracts.",
+  "version": "0.1.0-beta.2",
+  "description": "Resume schema, YAML and JSON providers, templates, and HTML rendering.",
   "keywords": [
     "cv",
     "html",
@@ -30,6 +30,18 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./providers": {
+      "types": "./dist/providers/index.d.ts",
+      "import": "./dist/providers/index.js"
+    },
+    "./templates": {
+      "types": "./dist/templates/index.d.ts",
+      "import": "./dist/templates/index.js"
+    },
+    "./renderer": {
+      "types": "./dist/renderer/index.d.ts",
+      "import": "./dist/renderer/index.js"
     }
   },
   "publishConfig": {
@@ -38,11 +50,22 @@
     "tag": "beta"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "markdown-it": "^14.1.0",
+    "postcss": "^8.5.31",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "yaml": "^2.8.0",
     "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2"
   },
   "engines": {
     "node": ">=24"

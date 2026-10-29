@@ -1,8 +1,8 @@
 import { expect, it } from "vitest";
 import postcss from "postcss";
 import { renderFragment } from "./fragment.js";
-import { getTemplate } from "@resume-sdk/templates";
-import type { ResumeTemplate } from "@resume-sdk/core";
+import { getTemplate } from "../templates/index.js";
+import type { ResumeTemplate } from "../index.js";
 const resume = { schemaVersion: "1" as const, basics: { name: "Example" } };
 const custom = (css: string): ResumeTemplate => ({
   id: "custom",

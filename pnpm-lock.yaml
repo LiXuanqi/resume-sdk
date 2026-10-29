@@ -193,69 +193,33 @@ importers:
       '@resume-sdk/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@resume-sdk/pdf':
-        specifier: workspace:*
-        version: link:../../packages/pdf
-      '@resume-sdk/providers':
-        specifier: workspace:*
-        version: link:../../packages/providers
-      '@resume-sdk/renderer':
-        specifier: workspace:*
-        version: link:../../packages/renderer
       commander:
         specifier: ^14.0.0
         version: 14.0.3
-
-  packages/core:
-    dependencies:
-      zod:
-        specifier: ^4.0.0
-        version: 4.6.7
-
-  packages/pdf:
-    dependencies:
-      '@resume-sdk/renderer':
-        specifier: workspace:*
-        version: link:../renderer
       playwright:
         specifier: ^1.56.0
         version: 1.64.1
 
-  packages/providers:
+  packages/core:
     dependencies:
-      '@resume-sdk/core':
-        specifier: workspace:*
-        version: link:../core
-      yaml:
-        specifier: ^2.8.0
-        version: 2.9.1
-
-  packages/renderer:
-    dependencies:
-      '@resume-sdk/core':
-        specifier: workspace:*
-        version: link:../core
-      '@resume-sdk/templates':
-        specifier: workspace:*
-        version: link:../templates
-      postcss:
-        specifier: ^8.5.31
-        version: 8.5.31
-
-  packages/templates:
-    dependencies:
-      '@resume-sdk/core':
-        specifier: workspace:*
-        version: link:../core
       markdown-it:
         specifier: ^14.1.0
         version: 14.3.3
+      postcss:
+        specifier: ^8.5.31
+        version: 8.5.31
       react:
         specifier: ^19.3.1
         version: 19.3.1
       react-dom:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
+      yaml:
+        specifier: ^2.8.0
+        version: 2.9.1
+      zod:
+        specifier: ^4.0.0
+        version: 4.6.7
     devDependencies:
       '@types/markdown-it':
         specifier: ^14.1.2

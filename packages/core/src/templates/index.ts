@@ -1,4 +1,4 @@
-export type { ResumeTemplate } from "@resume-sdk/core";
+export type { ResumeTemplate } from "../index.js";
 import { classicTemplate } from "./classic/index.js";
 import { blogTemplate } from "./blog/index.js";
 export { classicTemplate, blogTemplate };

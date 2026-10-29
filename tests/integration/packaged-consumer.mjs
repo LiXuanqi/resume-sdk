@@ -13,14 +13,7 @@ const run = (command, args, cwd = consumer, extraEnv = {}) =>
 const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 try {
   mkdirSync(archives);
-  const packages = [
-    "packages/core",
-    "packages/providers",
-    "packages/templates",
-    "packages/renderer",
-    "packages/pdf",
-    "apps/cli",
-  ];
+  const packages = ["packages/core", "apps/cli"];
   const dependencies = {};
   for (const directory of packages) {
     const manifest = json(join(root, directory, "package.json"));
@@ -28,6 +21,38 @@ try {
     const filename = `${manifest.name.replace(/^@/, "").replaceAll("/", "-")}-${manifest.version}.tgz`;
     dependencies[manifest.name] = `file:vendor/${filename}`;
   }
+  // First install only core. HTML consumers must not acquire Playwright or the CLI.
+  writeFileSync(
+    join(consumer, "package.json"),
+    JSON.stringify({
+      private: true,
+      type: "module",
+      dependencies: { "@resume-sdk/core": dependencies["@resume-sdk/core"] },
+    }),
+  );
+  run("pnpm", ["install", "--ignore-scripts", "--no-frozen-lockfile"]);
+  writeFileSync(
+    join(consumer, "core-only.mjs"),
+    `
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+import { validateResume } from "@resume-sdk/core";
+import { jsonProvider } from "@resume-sdk/core/providers";
+import { classicTemplate } from "@resume-sdk/core/templates";
+import { renderDocument, renderFragment } from "@resume-sdk/core/renderer";
+const requireCore = createRequire(import.meta.resolve("@resume-sdk/core"));
+assert.throws(() => requireCore.resolve("playwright"), { code: "MODULE_NOT_FOUND" });
+assert.throws(() => requireCore.resolve("playwright-core"), { code: "MODULE_NOT_FOUND" });
+assert.throws(() => import.meta.resolve("resume-sdk/pdf"), { code: "ERR_MODULE_NOT_FOUND" });
+const resume = validateResume({ schemaVersion: "1", basics: { name: "Core only" } });
+assert.deepEqual((await jsonProvider.load(JSON.stringify(resume))).resume, resume);
+assert(renderDocument(resume, {}, classicTemplate).includes("Core only"));
+assert(renderFragment(resume).html.includes("Core only"));
+`,
+  );
+  run(process.execPath, ["core-only.mjs"], consumer, {
+    PLAYWRIGHT_BROWSERS_PATH: join(consumer, "no-browser"),
+  });
   writeFileSync(
     join(consumer, "package.json"),
     JSON.stringify(
@@ -122,10 +147,10 @@ try {
     join(consumer, "consumer.mts"),
     `
 import { validateResume, type Resume, type ResumeTemplate } from "@resume-sdk/core";
-import { yamlProvider, jsonProvider } from "@resume-sdk/providers";
-import { classicTemplate, blogTemplate } from "@resume-sdk/templates";
-import { renderDocument, renderFragment } from "@resume-sdk/renderer";
-import { exportPdf, installBrowser, type InstallBrowserOptions } from "@resume-sdk/pdf";
+import { yamlProvider, jsonProvider } from "@resume-sdk/core/providers";
+import { classicTemplate, blogTemplate } from "@resume-sdk/core/templates";
+import { renderDocument, renderFragment } from "@resume-sdk/core/renderer";
+import { exportPdf, installBrowser, type InstallBrowserOptions } from "resume-sdk/pdf";
 const resume: Resume = validateResume({ schemaVersion: "1", basics: { name: "Package Test" } });
 const templates: ResumeTemplate[] = [classicTemplate, blogTemplate];
 const options: InstallBrowserOptions = { withDeps: false };
@@ -155,12 +180,12 @@ import assert from "node:assert/strict";
 import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { validateResume } from "@resume-sdk/core";
-import { jsonProvider, yamlProvider } from "@resume-sdk/providers";
-import { classicTemplate, blogTemplate } from "@resume-sdk/templates";
-import { renderDocument, renderFragment } from "@resume-sdk/renderer";
-import { exportPdf } from "@resume-sdk/pdf";
-for (const name of ["core", "providers", "templates", "renderer", "pdf"]) {
-  assert(realpathSync(fileURLToPath(import.meta.resolve("@resume-sdk/" + name))).startsWith(process.cwd() + "/node_modules/"));
+import { jsonProvider, yamlProvider } from "@resume-sdk/core/providers";
+import { classicTemplate, blogTemplate } from "@resume-sdk/core/templates";
+import { renderDocument, renderFragment } from "@resume-sdk/core/renderer";
+import { exportPdf } from "resume-sdk/pdf";
+for (const name of ["@resume-sdk/core", "@resume-sdk/core/providers", "@resume-sdk/core/templates", "@resume-sdk/core/renderer", "resume-sdk/pdf"]) {
+  assert(realpathSync(fileURLToPath(import.meta.resolve(name))).startsWith(process.cwd() + "/node_modules/"));
 }
 const resume = validateResume({ schemaVersion: "1", basics: { name: "Package Test" } });
 assert.deepEqual((await jsonProvider.load(JSON.stringify(resume))).resume, resume);

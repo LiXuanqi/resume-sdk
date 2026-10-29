@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.1.0-beta.1 - Unreleased
+## 0.1.0-beta.2 - Unreleased
+
+- Consolidate into `@resume-sdk/core` and `resume-sdk`.
+- Move providers, templates, and rendering to core subpath exports.
+- Move PDF export and browser installation to `resume-sdk/pdf`.
+- Keep Playwright out of core-only installations.
+
+## 0.1.0-beta.1 - Partial publication
+
+The six-package release was interrupted. Use the beta.2 candidate for the new package layout.
 
 - Validate and normalize canonical resume data from YAML and JSON.
 - Initialize resumes and preview local changes with the CLI.

@@ -8,8 +8,8 @@ it("accepts a plain JavaScript template and keeps document CSS out of its fragme
       "--input-type=module",
       "-e",
       `
-    import { renderDocument } from './packages/renderer/dist/index.js';
-    import { blogTemplate } from './packages/templates/dist/index.js';
+    import { renderDocument } from './packages/core/dist/renderer/index.js';
+    import { blogTemplate } from './packages/core/dist/templates/index.js';
     const resume = {schemaVersion:'1', basics:{name:'Example'}};
     const custom = {id:'custom', render:() => ({html:'<article>Custom</article>', css:'article {color:black}', assets:[]})};
     const html = renderDocument(resume, {paper:'letter'}, custom);

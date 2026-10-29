@@ -10,9 +10,16 @@ execFileSync(
   { stdio: "inherit" },
 );
 await build({
-  entryPoints: ["src/index.ts"],
-  outfile: "dist/index.js",
+  entryPoints: [
+    "src/index.ts",
+    "src/providers/index.ts",
+    "src/templates/index.ts",
+    "src/renderer/index.ts",
+  ],
+  outdir: "dist",
+  outbase: "src",
   bundle: true,
+  splitting: true,
   platform: "node",
   format: "esm",
   packages: "external",

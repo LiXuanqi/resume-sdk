@@ -9,7 +9,7 @@ Two templates are included. `classic` supports compact spacing. `blog` uses a si
 Requires Node.js 24 or later. Install the beta CLI in your project.
 
 ```sh
-npm install --save-dev resume-sdk@0.1.0-beta.1
+npm install --save-dev resume-sdk@0.1.0-beta.2
 npx resume-sdk init
 ```
 
@@ -48,7 +48,12 @@ npx resume-sdk build resume.yaml --mode fragment --out dist/embed
 
 This writes `resume.html` and `resume.css`. Load both in your page and add your own navigation, download button, or other components around the resume. The CSS is scoped to the resume, though your site's styles can still affect it.
 
-See the [React, Next.js, and plain HTML examples](examples/embedding/README.md). For direct library use, see the [renderer API](packages/renderer/README.md).
+See the [React, Next.js, and plain HTML examples](examples/embedding/README.md). For direct library use, see the [renderer API](docs/renderer.md).
+
+## Packages
+
+- `@resume-sdk/core` contains validation, providers, templates, and HTML rendering. Import modules through `/providers`, `/templates`, and `/renderer`.
+- `resume-sdk` contains the CLI and the `resume-sdk/pdf` API. It adds Playwright for PDF generation.
 
 ## Contributing
 
@@ -63,7 +68,7 @@ pnpm build
 
 Run `pnpm check` for formatting, linting, types, and tests. Run `pnpm test:package` to test the packages in a separate consumer project after installing Chromium.
 
-The [specification](docs/SPEC.md) defines the supported behavior. See the [template guide](packages/templates/README.md) to add a template and the [release guide](docs/releasing.md) for packaging and publication.
+The [specification](docs/SPEC.md) defines the supported behavior. See the [template guide](docs/templates.md) to add a template and the [release guide](docs/releasing.md) for packaging and publication.
 
 ## License
 

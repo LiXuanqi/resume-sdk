@@ -18,16 +18,18 @@ Source, template, and output are independent choices. A template must not depend
 
 `source → provider → canonical validation → resume → template → HTML/CSS/assets → export`
 
-| Workspace            | Owns                                                                | Boundary                                                |
-| -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------- |
-| `packages/core`      | Schema, types, validation, diagnostics, provider/template contracts | No filesystem, network, React, or browser dependencies  |
-| `packages/providers` | Source parsing and mapping into canonical data                      | No presentation; credentials supplied by caller         |
-| `packages/templates` | Section layout, typography, scoped styling                          | Receives validated data and options; no source fetching |
-| `packages/renderer`  | Standalone documents, fragments, asset packaging                    | Framework-neutral output; no Chromium dependency        |
-| `packages/pdf`       | Playwright/Chromium export of rendered HTML                         | Browser installation and execution explicit             |
-| `apps/cli`           | File I/O, selection, orchestration, diagnostics                     | Calls library APIs; no duplicated rendering logic       |
+| Package/module                | Owns                                        | Boundary                                     |
+| ----------------------------- | ------------------------------------------- | -------------------------------------------- |
+| `packages/core/src`           | Schema, validation, contracts               | Root entry does not import rendering modules |
+| `packages/core/src/providers` | YAML/JSON parsing                           | No presentation or implicit source fetching  |
+| `packages/core/src/templates` | React/TSX layout and CSS                    | Framework-neutral template contract          |
+| `packages/core/src/renderer`  | HTML documents and scoped fragments         | No Playwright dependency                     |
+| `apps/cli/src/pdf`            | Playwright PDF export and browser installer | Explicit browser setup                       |
+| `apps/cli/src`                | CLI file I/O and orchestration              | Calls library APIs                           |
 
-Use pnpm workspaces, Node.js 24 LTS baseline, TypeScript strict mode, and ESM. Publish JavaScript and type declarations. Built-in templates use React/TSX and `react-dom/server` static rendering; esbuild compiles separate CSS files into strings at package build time. React stays inside the template package; output consumers must not need React. Consumers can use any npm-compatible package manager. The repository and all six packages use the MIT license, Copyright (c) 2026 Xuanqi Li. Each package includes a LICENSE file identical to the root license and declares `license: "MIT"`, author, description, repository location, homepage, and issue tracker metadata. Public package names/scopes must be settled before publishing.
+Publish exactly two packages. `@resume-sdk/core` exports the root schema/contracts plus `/providers`, `/templates`, and `/renderer`. `resume-sdk` exposes the CLI executable and `/pdf`. Installing core alone must not install Playwright. Both packages ship ESM JavaScript and declarations for every public entry. Internal module boundaries remain separate from npm package boundaries.
+
+Use pnpm workspaces, Node.js 24 LTS baseline, TypeScript strict mode, and ESM. Publish JavaScript and type declarations. Built-in templates use React/TSX and `react-dom/server` static rendering; esbuild compiles separate CSS files into strings at package build time. React stays inside the template module; output consumers must not need React. Consumers can use any npm-compatible package manager. The repository and both packages use the MIT license, Copyright (c) 2026 Xuanqi Li. Each package includes a LICENSE file identical to the root license and declares `license: "MIT"`, author, description, repository location, homepage, and issue tracker metadata. Public package names/scopes must be settled before publishing.
 
 ## Canonical data
 
@@ -62,13 +64,13 @@ The initial field contract is recorded in [schema.md](schema.md); the implementa
 
 ### Built-in template authoring
 
-- Templates live under `packages/templates/src/<id>/`: `index.tsx`, `styles.css`, optional standalone `document.css`, and README. Shared components encapsulate safe rich text and repeated markup. Only allowlisted Markdown output reaches `dangerouslySetInnerHTML`; React escapes ordinary data.
+- Templates live under `packages/core/src/templates/<id>/`: `index.tsx`, `styles.css`, optional standalone `document.css`, and README. Shared components encapsulate safe rich text and repeated markup. Only allowlisted Markdown output reaches `dangerouslySetInnerHTML`; React escapes ordinary data.
 - `renderToStaticMarkup` produces body-only HTML. No hooks, browser APIs, hydration, or network requests are required. CSS is bundled into the published JS entry, so callers need neither a CSS loader nor a JSX compiler.
 - Register templates centrally; CLI build/preview select the same registry. Library callers can still supply a custom `ResumeTemplate` directly.
 - `classic` preserves its pre-migration layout for both densities and papers.
 - `blog` reproduces the reference blog resume document: system sans font, centered contact rows, company-first headings, right-aligned dates, ruled section headings, 14px screen/12px print body, and the source's screen/print padding. It has fixed responsive-media spacing; `compact` is rejected rather than ignored. To match the blog's visible content, use `--sections education,work`; other selected sections remain supported.
 - Blog dates render from canonical precision as YYYY, MM/YYYY, or MM/DD/YYYY with an en-dash range separator. Original punctuation is not retained in canonical data. The host owns navigation such as Back to Home. System font/platform differences can affect cross-machine rendering; pixel matching is verified in the same browser/font environment.
-- Contributor instructions and extension boundaries live in `packages/templates/README.md`. Template changes require validation/escaping tests and print checks. Personal comparison data remains outside the repository.
+- Contributor instructions and extension boundaries live in `docs/templates.md`. Template changes require validation/escaping tests and print checks. Personal comparison data remains outside the repository.
 
 ## Output contracts
 
@@ -113,8 +115,8 @@ resume-sdk build resume.yaml --format html,pdf --out dist/ --force --json
 resume-sdk normalize resume.yaml --out resume.json
 ```
 
-- `install-browser` installs Chromium through the Playwright CLI resolved from the installed `@resume-sdk/pdf` package. `--with-deps` additionally installs system libraries and may require elevated privileges on Linux. It inherits Playwright cache/proxy environment variables and streams installer output. Successful installation exits 0; launch, nonzero child exit, or signal failure exits 1. Unknown options are CLI usage errors. No browser download occurs during package installation or ordinary builds.
-- Library callers may use `installBrowser(options?: { withDeps?: boolean }): Promise<void>` from `@resume-sdk/pdf`. Failures reject the promise. Missing-browser errors identify the public installer command and library API.
+- `install-browser` installs Chromium through the Playwright CLI resolved from the installed `resume-sdk/pdf` package. `--with-deps` additionally installs system libraries and may require elevated privileges on Linux. It inherits Playwright cache/proxy environment variables and streams installer output. Successful installation exits 0; launch, nonzero child exit, or signal failure exits 1. Unknown options are CLI usage errors. No browser download occurs during package installation or ordinary builds.
+- Library callers may use `installBrowser(options?: { withDeps?: boolean }): Promise<void>` from `resume-sdk/pdf`. Failures reject the promise. Missing-browser errors identify the public installer command and library API.
 - `init` writes documented, fictional starter data to `./resume.yaml`. Never overwrites, including symlinks; no `--force` option.
 - `validate <input>` checks canonical data and reports field-specific failures.
 - `build <input>` defaults to standalone HTML, classic template, Letter paper, all populated sections, and `./dist`. `--format` accepts `html`, `pdf`, or comma-separated `html,pdf` without duplicates. HTML-only builds do not load/start Chromium.
@@ -145,14 +147,14 @@ resume-sdk normalize resume.yaml --out resume.json
 - HTML works offline; PDF text extraction retains expected content. Review screenshots/rendered PDF pages for A4/Letter, long resumes, page breaks, fonts, and links. Do not rely on binary PDF snapshots alone.
 - Demonstrate fragments in a plain HTML site and a React app with surrounding components. `pnpm test:embed` uses Chromium to check host-style isolation, coexistence of classic/blog, theme variables, and screen/print styling. Examples live in `examples/embedding/`; consumer CSS may still affect an embed.
 - `pnpm check` runs formatting, linting, build/type-checking, and tests. CI also runs CLI smoke checks; PDF tests install Chromium explicitly when introduced.
-- `pnpm test:package` builds and packs all six packages, installs tarballs into a temporary consumer outside the workspace, and checks CLI execution, public TypeScript declarations, provider loading, both templates, document/fragment rendering, browser installation, and PDF export. HTML and fragments must work with an empty browser cache; PDF must fail with installer guidance until Chromium is available. Tests use local overrides for unpublished internal versions, never workspace links. CI runs these checks; third-party installation may require network access. This test does not verify npm ownership or publish anything. The workspace root remains private; release packages are publishable.
+- `pnpm test:package` builds and packs both packages, installs tarballs into a temporary consumer outside the workspace, and first verifies core-only HTML rendering without Playwright, then checks CLI execution, public TypeScript declarations, provider loading, both templates, document/fragment rendering, browser installation, and PDF export. HTML and fragments must work with an empty browser cache; PDF must fail with installer guidance until Chromium is available. Tests use local overrides for unpublished internal versions, never workspace links. CI runs these checks; third-party installation may require network access. This test does not verify npm ownership or publish anything. The workspace root remains private; release packages are publishable.
 - Pre-commit runs safe lint fixes and formatting on staged files only. Keep full builds/tests in CI.
 
 MVP is complete when a fresh checkout can validate either supported source, export normalized JSON, and generate a usable standalone HTML resume and upload-ready PDF without blog-specific code or services.
 
 ## Release preparation
 
-The initial beta version is `0.1.0-beta.1` for all six SDK packages. Internal `workspace:*` dependencies pack to that exact version. Package metadata specifies public access, the `beta` tag, and the npm registry. Publication requires explicit authorization. The non-published workspace root stays private at `0.0.0`.
+The next candidate version is `0.1.0-beta.2` for both SDK packages. Internal `workspace:*` dependencies pack to that exact version. Package metadata specifies public access, the `beta` tag, and the npm registry. Publication requires explicit authorization. The non-published workspace root stays private at `0.0.0`.
 
 `pnpm release:prepare` builds and packs the candidate, checks coordinated versions and license/publication metadata, and writes tarballs with SHA-256 checksums and Git source state under `dist/release/<version>/`. The manual `release.yml` workflow runs the existing checks and uploads artifacts only. It has no publication command or credentials. Release archives contain publishable manifests. Publication uses an interactive npm owner login; subsequent per-package trusted publishing remains setup work. See [releasing.md](releasing.md).
 

@@ -1,16 +1,18 @@
 # Architecture
 
-See [SPEC.md](SPEC.md) for authoritative contracts, scope, and acceptance criteria. This file is a brief overview.
+See [SPEC.md](SPEC.md) for contracts and acceptance criteria.
 
-Source providers → validated canonical resume → selected template → portable HTML → PDF.
+Providers parse source data into a validated resume. Templates turn it into HTML and CSS. The renderer produces a standalone document or a scoped fragment. The PDF exporter prints a standalone document with Chromium.
 
-- core: versioned schema, validation, and contracts; no rendering or platform adapters.
-- providers: parse source data and validate it; JSON and YAML initially.
-- templates: layout and scoped styling; independent of host sites.
-- renderer: standalone documents and scoped fragments; asset packaging is deferred.
-- pdf: isolated Playwright dependency for browser-based export.
-- cli: user-facing orchestration.
+Two npm packages contain these modules.
 
-All packages are private during scaffolding. Package scopes are provisional and have not been reserved.
-Built-in templates use React/TSX and separate CSS, compiled into static HTML/CSS artifacts. Core contracts remain framework-neutral; generated output requires no React runtime.
-Add external providers, an optional React slot API, and reviewed LLM tailoring after the base pipeline works.
+| Package            | Source              | Public entry points                                            |
+| ------------------ | ------------------- | -------------------------------------------------------------- |
+| `@resume-sdk/core` | `packages/core/src` | Root schema/contracts, `/providers`, `/templates`, `/renderer` |
+| `resume-sdk`       | `apps/cli/src`      | CLI executable and `/pdf`                                      |
+
+Core has no Playwright dependency. Its templates use React/TSX and separate CSS internally; generated HTML requires no client-side React. Module contracts remain framework-neutral. The schema entry does not import rendering modules.
+
+The CLI depends on core and owns Playwright. PDF installation and execution remain explicit. Internal modules use relative imports; consumers use public package exports.
+
+The next candidate is `0.1.0-beta.2`. The earlier six-package beta publication was interrupted. Existing npm versions cannot be replaced. No consolidated package has been published yet.

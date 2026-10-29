@@ -1,4 +1,4 @@
-import { validateResume, type ResumeProvider } from "@resume-sdk/core";
+import { validateResume, type ResumeProvider } from "../../index.js";
 
 export const jsonProvider: ResumeProvider = {
   id: "json",

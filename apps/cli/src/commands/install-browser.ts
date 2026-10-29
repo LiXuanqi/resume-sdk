@@ -9,7 +9,7 @@ export function addInstallBrowser(program: Command) {
       "Also install system libraries (may require elevated privileges on Linux)",
     )
     .action(async (options: { withDeps?: boolean }) => {
-      const { installBrowser } = await import("@resume-sdk/pdf");
+      const { installBrowser } = await import("../pdf/index.js");
       await installBrowser(options);
     });
 }

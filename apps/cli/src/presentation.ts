@@ -1,5 +1,5 @@
 import { InvalidArgumentError, Option, type Command } from "commander";
-import { templateIds } from "@resume-sdk/renderer";
+import { templateIds } from "@resume-sdk/core/renderer";
 import { renderOptionsSchema } from "@resume-sdk/core";
 
 export interface PresentationOptions {

@@ -1,6 +1,6 @@
 {
   "name": "resume-sdk",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Create, validate, preview, and export resumes from YAML or JSON.",
   "keywords": [
     "cv",
@@ -29,6 +29,12 @@
     "README.md"
   ],
   "type": "module",
+  "exports": {
+    "./pdf": {
+      "types": "./dist/pdf/index.d.ts",
+      "import": "./dist/pdf/index.js"
+    }
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/",
@@ -41,10 +47,8 @@
   },
   "dependencies": {
     "@resume-sdk/core": "workspace:*",
-    "@resume-sdk/pdf": "workspace:*",
-    "@resume-sdk/providers": "workspace:*",
-    "@resume-sdk/renderer": "workspace:*",
-    "commander": "^14.0.0"
+    "commander": "^14.0.0",
+    "playwright": "^1.56.0"
   },
   "engines": {
     "node": ">=24"

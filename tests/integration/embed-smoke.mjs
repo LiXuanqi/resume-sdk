@@ -1,8 +1,8 @@
 import { strict as assert } from "node:assert";
 import { createRequire } from "node:module";
 import { readFile } from "node:fs/promises";
-import { renderFragment, getTemplate } from "../../packages/renderer/dist/index.js";
-const { chromium } = createRequire(new URL("../../packages/pdf/package.json", import.meta.url))(
+import { renderFragment, getTemplate } from "../../packages/core/dist/renderer/index.js";
+const { chromium } = createRequire(new URL("../../apps/cli/package.json", import.meta.url))(
   "playwright",
 );
 const resume = JSON.parse(

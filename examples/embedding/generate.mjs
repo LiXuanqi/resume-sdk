@@ -1,5 +1,5 @@
 import { readFile, mkdir, writeFile } from "node:fs/promises";
-import { renderFragment } from "../../packages/renderer/dist/index.js";
+import { renderFragment } from "../../packages/core/dist/renderer/index.js";
 const resume = JSON.parse(await readFile(new URL("../resume.json", import.meta.url), "utf8"));
 const fragment = renderFragment(resume, { paper: "letter", density: "compact" });
 const out = new URL("./dist/", import.meta.url);

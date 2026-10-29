@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { renderOptionsSchema, validateResume, type ResumeTemplate } from "@resume-sdk/core";
+import { renderOptionsSchema, validateResume, type ResumeTemplate } from "../../index.js";
 import { Highlights, RichText, type DateRange } from "../shared/components.js";
 import css from "./styles.css";
 import documentCss from "./document.css";

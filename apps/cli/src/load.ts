@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { extname } from "node:path";
-import { jsonProvider, yamlProvider } from "@resume-sdk/providers";
+import { jsonProvider, yamlProvider } from "@resume-sdk/core/providers";
 
 export async function loadResume(file: string) {
   const ext = extname(file).toLowerCase();

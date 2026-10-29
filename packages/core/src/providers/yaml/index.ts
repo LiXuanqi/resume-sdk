@@ -1,4 +1,4 @@
-import { validateResume, type ResumeProvider } from "@resume-sdk/core";
+import { validateResume, type ResumeProvider } from "../../index.js";
 import { parse } from "yaml";
 
 export const yamlProvider: ResumeProvider = {

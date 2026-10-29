@@ -1,22 +1,22 @@
-# @resume-sdk/templates
+# @resume-sdk/core/templates
 
-Requires Node.js 24 or later. ESM only. The beta version is `0.1.0-beta.1`.
+Requires Node.js 24 or later. ESM only. Beta version `0.1.0-beta.2`.
 
 Built-in classic and blog templates that return static HTML and CSS through the framework-neutral template contract. React and TSX are internal authoring details; exported resumes need no client-side React runtime.
 
 ```sh
-npm install @resume-sdk/core@0.1.0-beta.1 @resume-sdk/templates@0.1.0-beta.1
+npm install @resume-sdk/core@0.1.0-beta.2
 ```
 
 ```js
 import { validateResume } from "@resume-sdk/core";
-import { classicTemplate, blogTemplate, getTemplate } from "@resume-sdk/templates";
+import { classicTemplate, blogTemplate, getTemplate } from "@resume-sdk/core/templates";
 
 const resume = validateResume({ schemaVersion: "1", basics: { name: "Alex Example" } });
 const output = classicTemplate.render(resume, { paper: "letter", density: "compact" });
 ```
 
-Direct rendering returns template markup, CSS, assets, and optional document metadata. Use `@resume-sdk/renderer` for a complete document or an embedding-safe scoped fragment. Classic supports comfortable and compact density. Blog supports comfortable density only. Both support section selection and Letter/A4 output.
+Direct rendering returns template markup, CSS, assets, and optional document metadata. Use `@resume-sdk/core/renderer` for a complete document or an embedding-safe scoped fragment. Classic supports comfortable and compact density. Blog supports comfortable density only. Both support section selection and Letter/A4 output.
 
 ## Authoring templates
 
@@ -25,7 +25,7 @@ Built-ins use React + TSX for readable typed components and separate CSS files f
 ### Layout
 
 ```text
-src/
+packages/core/src/templates/
   classic/index.tsx    React components and static-render adapter
   classic/styles.css  Scoped typography, density, print rules
   blog/index.tsx      Blog-style document
@@ -40,10 +40,10 @@ src/
 1. Create `<id>/index.tsx` exporting a `ResumeTemplate`. Validate input and options; return `renderToStaticMarkup(<YourResume />)` as `html`, imported CSS as `css`, and `assets: []`.
 2. Scope fragment CSS to the template's root class. Keep all paper padding/minimum heights in the standalone shell. Fragment CSS supports flat rules plus `@media`/`@supports`; other at-rules/nesting currently fail. Global body/page-shell rules belong in the optional `document: { marginMm, css }` field, which fragment consumers must omit. Let the document renderer emit page size/margins.
 3. Use ordinary JSX expressions for data; React escapes them. Use `RichText`/`Highlights` for descriptions. Never insert source HTML directly. Keep data fetching, filesystem access, browser effects, and website navigation out of templates.
-4. Register the template in `src/index.ts`. CLI build/preview choices follow that registry automatically. Honor selected section order and populated content; do not trim facts to fit a page. Reject unsupported presentation options explicitly.
+4. Register the template in `packages/core/src/templates/index.ts`. CLI build/preview choices follow that registry automatically. Honor selected section order and populated content; do not trim facts to fit a page. Reject unsupported presentation options explicitly.
 5. Run `pnpm check` and `pnpm test:pdf`. Preview fictional data with `pnpm cli preview examples/resume.yaml --template <id>`; inspect short/long resumes, both papers, links, and malicious-looking text.
 
-`build.mjs` emits declarations and bundles the single public entry with CSS as strings. React and Markdown libraries remain package dependencies. No runtime CSS files or consumer loaders are needed. Generated `dist/` is disposable.
+`packages/core/build.mjs` emits declarations and bundles the public module entries with CSS as strings. React and Markdown libraries remain package dependencies. No runtime CSS files or consumer loaders are needed. Generated `dist/` is disposable.
 
 ## Framework-neutral boundary
 
@@ -51,4 +51,4 @@ src/
 
 ## License
 
-MIT. Copyright (c) 2026 Xuanqi Li. See [LICENSE](LICENSE).
+MIT. Copyright (c) 2026 Xuanqi Li. See [LICENSE](../LICENSE).

@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { watchFile, unwatchFile } from "node:fs";
 import { resolve } from "node:path";
 import { spawn } from "node:child_process";
-import { renderDocument, getTemplate } from "@resume-sdk/renderer";
+import { renderDocument, getTemplate } from "@resume-sdk/core/renderer";
 import { loadResume } from "../load.js";
 import { presentationOptions, renderSettings, type PresentationOptions } from "../presentation.js";
 
