@@ -27,7 +27,7 @@ Source, template, and output are independent choices. A template must not depend
 | `apps/cli/src/pdf`            | Playwright PDF export and browser installer | Explicit browser setup                       |
 | `apps/cli/src`                | CLI file I/O and orchestration              | Calls library APIs                           |
 
-Publish exactly two packages. `@resume-sdk/core` exports the root schema/contracts plus `/providers`, `/templates`, and `/renderer`. `resume-sdk` exposes the CLI executable and `/pdf`. Installing core alone must not install Playwright. Both packages ship ESM JavaScript and declarations for every public entry. Internal module boundaries remain separate from npm package boundaries.
+Publish exactly two packages. `@resume-sdk/core` exports the root schema/contracts plus `/providers`, `/templates`, and `/renderer`. `@resume-sdk/cli` exposes the CLI executable and `/pdf`. Installing core alone must not install Playwright. Both packages ship ESM JavaScript and declarations for every public entry. Internal module boundaries remain separate from npm package boundaries.
 
 Use pnpm workspaces, Node.js 24 LTS baseline, TypeScript strict mode, and ESM. Publish JavaScript and type declarations. Built-in templates use React/TSX and `react-dom/server` static rendering; esbuild compiles separate CSS files into strings at package build time. React stays inside the template module; output consumers must not need React. Consumers can use any npm-compatible package manager. The repository and both packages use the MIT license, Copyright (c) 2026 Xuanqi Li. Each package includes a LICENSE file identical to the root license and declares `license: "MIT"`, author, description, repository location, homepage, and issue tracker metadata. Public package names/scopes must be settled before publishing.
 
@@ -115,8 +115,8 @@ resume-sdk build resume.yaml --format html,pdf --out dist/ --force --json
 resume-sdk normalize resume.yaml --out resume.json
 ```
 
-- `install-browser` installs Chromium through the Playwright CLI resolved from the installed `resume-sdk/pdf` package. `--with-deps` additionally installs system libraries and may require elevated privileges on Linux. It inherits Playwright cache/proxy environment variables and streams installer output. Successful installation exits 0; launch, nonzero child exit, or signal failure exits 1. Unknown options are CLI usage errors. No browser download occurs during package installation or ordinary builds.
-- Library callers may use `installBrowser(options?: { withDeps?: boolean }): Promise<void>` from `resume-sdk/pdf`. Failures reject the promise. Missing-browser errors identify the public installer command and library API.
+- `install-browser` installs Chromium through the Playwright CLI resolved from the installed `@resume-sdk/cli/pdf` package. `--with-deps` additionally installs system libraries and may require elevated privileges on Linux. It inherits Playwright cache/proxy environment variables and streams installer output. Successful installation exits 0; launch, nonzero child exit, or signal failure exits 1. Unknown options are CLI usage errors. No browser download occurs during package installation or ordinary builds.
+- Library callers may use `installBrowser(options?: { withDeps?: boolean }): Promise<void>` from `@resume-sdk/cli/pdf`. Failures reject the promise. Missing-browser errors identify the public installer command and library API.
 - `init` writes documented, fictional starter data to `./resume.yaml`. Never overwrites, including symlinks; no `--force` option.
 - `validate <input>` checks canonical data and reports field-specific failures.
 - `build <input>` defaults to standalone HTML, classic template, Letter paper, all populated sections, and `./dist`. `--format` accepts `html`, `pdf`, or comma-separated `html,pdf` without duplicates. HTML-only builds do not load/start Chromium.

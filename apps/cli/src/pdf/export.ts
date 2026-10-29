@@ -3,7 +3,7 @@ import { chromium } from "playwright";
 export async function exportPdf(html: string): Promise<Uint8Array> {
   const browser = await chromium.launch().catch((error: unknown) => {
     throw new Error(
-      `Could not start Chromium. Install it with: resume-sdk install-browser (or call installBrowser() from resume-sdk/pdf). Browser error: ${error instanceof Error ? error.message : String(error)}`,
+      `Could not start Chromium. Install it with: resume-sdk install-browser (or call installBrowser() from @resume-sdk/cli/pdf). Browser error: ${error instanceof Error ? error.message : String(error)}`,
       { cause: error },
     );
   });

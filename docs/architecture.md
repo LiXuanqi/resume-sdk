@@ -9,7 +9,7 @@ Two npm packages contain these modules.
 | Package            | Source              | Public entry points                                            |
 | ------------------ | ------------------- | -------------------------------------------------------------- |
 | `@resume-sdk/core` | `packages/core/src` | Root schema/contracts, `/providers`, `/templates`, `/renderer` |
-| `resume-sdk`       | `apps/cli/src`      | CLI executable and `/pdf`                                      |
+| `@resume-sdk/cli`  | `apps/cli/src`      | CLI executable and `/pdf`                                      |
 
 Core has no Playwright dependency. Its templates use React/TSX and separate CSS internally; generated HTML requires no client-side React. Module contracts remain framework-neutral. The schema entry does not import rendering modules.
 

@@ -43,7 +43,7 @@ import { renderDocument, renderFragment } from "@resume-sdk/core/renderer";
 const requireCore = createRequire(import.meta.resolve("@resume-sdk/core"));
 assert.throws(() => requireCore.resolve("playwright"), { code: "MODULE_NOT_FOUND" });
 assert.throws(() => requireCore.resolve("playwright-core"), { code: "MODULE_NOT_FOUND" });
-assert.throws(() => import.meta.resolve("resume-sdk/pdf"), { code: "ERR_MODULE_NOT_FOUND" });
+assert.throws(() => import.meta.resolve("@resume-sdk/cli/pdf"), { code: "ERR_MODULE_NOT_FOUND" });
 const resume = validateResume({ schemaVersion: "1", basics: { name: "Core only" } });
 assert.deepEqual((await jsonProvider.load(JSON.stringify(resume))).resume, resume);
 assert(renderDocument(resume, {}, classicTemplate).includes("Core only"));
@@ -150,7 +150,7 @@ import { validateResume, type Resume, type ResumeTemplate } from "@resume-sdk/co
 import { yamlProvider, jsonProvider } from "@resume-sdk/core/providers";
 import { classicTemplate, blogTemplate } from "@resume-sdk/core/templates";
 import { renderDocument, renderFragment } from "@resume-sdk/core/renderer";
-import { exportPdf, installBrowser, type InstallBrowserOptions } from "resume-sdk/pdf";
+import { exportPdf, installBrowser, type InstallBrowserOptions } from "@resume-sdk/cli/pdf";
 const resume: Resume = validateResume({ schemaVersion: "1", basics: { name: "Package Test" } });
 const templates: ResumeTemplate[] = [classicTemplate, blogTemplate];
 const options: InstallBrowserOptions = { withDeps: false };
@@ -183,8 +183,8 @@ import { validateResume } from "@resume-sdk/core";
 import { jsonProvider, yamlProvider } from "@resume-sdk/core/providers";
 import { classicTemplate, blogTemplate } from "@resume-sdk/core/templates";
 import { renderDocument, renderFragment } from "@resume-sdk/core/renderer";
-import { exportPdf } from "resume-sdk/pdf";
-for (const name of ["@resume-sdk/core", "@resume-sdk/core/providers", "@resume-sdk/core/templates", "@resume-sdk/core/renderer", "resume-sdk/pdf"]) {
+import { exportPdf } from "@resume-sdk/cli/pdf";
+for (const name of ["@resume-sdk/core", "@resume-sdk/core/providers", "@resume-sdk/core/templates", "@resume-sdk/core/renderer", "@resume-sdk/cli/pdf"]) {
   assert(realpathSync(fileURLToPath(import.meta.resolve(name))).startsWith(process.cwd() + "/node_modules/"));
 }
 const resume = validateResume({ schemaVersion: "1", basics: { name: "Package Test" } });

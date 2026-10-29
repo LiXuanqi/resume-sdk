@@ -2,9 +2,9 @@
 
 ## 0.1.0-beta.2 - Unreleased
 
-- Consolidate into `@resume-sdk/core` and `resume-sdk`.
+- Consolidate into `@resume-sdk/core` and `@resume-sdk/cli`.
 - Move providers, templates, and rendering to core subpath exports.
-- Move PDF export and browser installation to `resume-sdk/pdf`.
+- Move PDF export and browser installation to `@resume-sdk/cli/pdf`.
 - Keep Playwright out of core-only installations.
 
 ## 0.1.0-beta.1 - Partial publication

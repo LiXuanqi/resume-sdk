@@ -1,5 +1,5 @@
 {
-  "name": "resume-sdk",
+  "name": "@resume-sdk/cli",
   "version": "0.1.0-beta.2",
   "description": "Create, validate, preview, and export resumes from YAML or JSON.",
   "keywords": [

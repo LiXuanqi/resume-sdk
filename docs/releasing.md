@@ -4,6 +4,12 @@ The current candidate is `0.1.0-beta.2`. Both SDK packages share this version. T
 
 The six-package `0.1.0-beta.1` release was interrupted during publication. Use `0.1.0-beta.2` for the consolidated packages; never overwrite or retry the old archives as this release. Check registry state before deprecating any old package.
 
+## Partial beta.2 publication
+
+`@resume-sdk/core@0.1.0-beta.2` is already published. npm rejected the unscoped CLI name because it resembles `resumesdk`. Publish only `@resume-sdk/cli@0.1.0-beta.2` to finish this release. Keep the `resume-sdk` executable name; the PDF import is `@resume-sdk/cli/pdf`.
+
+Do not republish core. Verify its registry archive against the original candidate from commit `f6703207b48627b8b3808c72b5ac096acd7f898a`. The published core README still mentions the rejected CLI name; use this repository's CLI instructions instead.
+
 ## Verify and pack locally
 
 ```sh
@@ -51,7 +57,7 @@ Execute publication commands only after the release has been explicitly authoriz
 
 ```sh
 npm publish resume-sdk-core-0.1.0-beta.2.tgz --access public --tag beta --registry=https://registry.npmjs.org/
-npm publish resume-sdk-0.1.0-beta.2.tgz --access public --tag beta --registry=https://registry.npmjs.org/
+npm publish resume-sdk-cli-0.1.0-beta.2.tgz --access public --tag beta --registry=https://registry.npmjs.org/
 ```
 
 5. Verify each registry version and its `beta` tag. If a command times out or a partial release occurs, inspect the registry before retrying. Never assume a failed client response means nothing was published. Compare the published archive with the intended candidate before skipping an existing version.

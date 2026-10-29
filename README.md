@@ -9,7 +9,7 @@ Two templates are included. `classic` supports compact spacing. `blog` uses a si
 Requires Node.js 24 or later. Install the beta CLI in your project.
 
 ```sh
-npm install --save-dev resume-sdk@0.1.0-beta.2
+npm install --save-dev @resume-sdk/cli@0.1.0-beta.2
 npx resume-sdk init
 ```
 
@@ -53,7 +53,7 @@ See the [React, Next.js, and plain HTML examples](examples/embedding/README.md).
 ## Packages
 
 - `@resume-sdk/core` contains validation, providers, templates, and HTML rendering. Import modules through `/providers`, `/templates`, and `/renderer`.
-- `resume-sdk` contains the CLI and the `resume-sdk/pdf` API. It adds Playwright for PDF generation.
+- `@resume-sdk/cli` contains the CLI and the `@resume-sdk/cli/pdf` API. It adds Playwright for PDF generation.
 
 ## Contributing
 
