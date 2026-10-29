@@ -15,4 +15,4 @@ Core has no Playwright dependency. Its templates use React/TSX and separate CSS 
 
 The CLI depends on core and owns Playwright. PDF installation and execution remain explicit. Internal modules use relative imports; consumers use public package exports.
 
-The next candidate is `0.1.0-beta.2`. The earlier six-package beta publication was interrupted. Existing npm versions cannot be replaced. No consolidated package has been published yet.
+The two-package release is `0.1.0-beta.2`. Core is available on npm. npm accepted the scoped CLI publication, but public availability and fresh registry installation still need verification. The earlier six-package beta publication was interrupted. Existing npm versions cannot be replaced.

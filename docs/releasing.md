@@ -4,9 +4,11 @@ The current candidate is `0.1.0-beta.2`. Both SDK packages share this version. T
 
 The six-package `0.1.0-beta.1` release was interrupted during publication. Use `0.1.0-beta.2` for the consolidated packages; never overwrite or retry the old archives as this release. Check registry state before deprecating any old package.
 
-## Partial beta.2 publication
+## Beta.2 publication status
 
-`@resume-sdk/core@0.1.0-beta.2` is already published. npm rejected the unscoped CLI name because it resembles `resumesdk`. Publish only `@resume-sdk/cli@0.1.0-beta.2` to finish this release. Keep the `resume-sdk` executable name; the PDF import is `@resume-sdk/cli/pdf`.
+`@resume-sdk/core@0.1.0-beta.2` is already published. npm rejected the unscoped CLI name because it resembles `resumesdk`. npm accepted `@resume-sdk/cli@0.1.0-beta.2` on 2026-10-29, but public registry reads still returned 404 during verification. Do not republish it while processing is pending. Keep the `resume-sdk` executable name; the PDF import is `@resume-sdk/cli/pdf`.
+
+The CLI artifact was built by [run 40837639518](https://github.com/LiXuanqi/resume-sdk/actions/runs/40837639518) from commit `438247573521d01bdfc593d8e78eb322cd7b4c92`. Finish registry checksum and fresh-consumer tests before creating the release tag.
 
 Do not republish core. Verify its registry archive against the original candidate from commit `f6703207b48627b8b3808c72b5ac096acd7f898a`. The published core README still mentions the rejected CLI name; use this repository's CLI instructions instead.
 

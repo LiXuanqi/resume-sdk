@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.1.0-beta.2 - Unreleased
+## 0.1.0-beta.2 - Registry verification pending
+
+npm accepted both package publications. Core is publicly available; CLI availability and the final registry install test are pending.
 
 - Consolidate into `@resume-sdk/core` and `@resume-sdk/cli`.
 - Move providers, templates, and rendering to core subpath exports.
